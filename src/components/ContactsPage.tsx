@@ -282,14 +282,19 @@ export const ContactsPage: React.FC<ContactsProps> = ({ onSelectContact }) => {
                   <td className="py-3.5 px-4 text-[#a7adc0]">{c.market}</td>
 
                   <td className="py-3.5 px-4">
-                    <span className="px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider bg-[#101323] text-[#9b8afb] border border-[#202641]">
+                    <span className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider inline-block border whitespace-nowrap ${
+                      c.status === 'Engaged' ? 'bg-[#35b77a]/15 text-[#35b77a] border-[#35b77a]/30' :
+                      c.status === 'Enrolled' ? 'bg-[#5965d8]/15 text-[#9b8afb] border-[#5965d8]/30' :
+                      c.status === 'Opted Out' || c.status === 'DNC' ? 'bg-[#d05a72]/15 text-[#d05a72] border-[#d05a72]/30' :
+                      'bg-[#101323] text-[#a7adc0] border-[#202641]'
+                    }`}>
                       {c.status}
                     </span>
                   </td>
 
                   <td className="py-3.5 px-4">
                     <div className="flex items-center gap-1.5">
-                      <span className={`w-6 h-6 rounded font-bold text-xs flex items-center justify-center border ${
+                      <span className={`w-6 h-6 rounded-lg font-bold text-xs flex items-center justify-center border ${
                         c.grade === 'A' ? 'bg-[#35b77a]/15 text-[#35b77a] border-[#35b77a]/30' :
                         c.grade === 'B' ? 'bg-[#5965d8]/15 text-[#5965d8] border-[#5965d8]/30' :
                         c.grade === 'C' ? 'bg-[#9b8afb]/15 text-[#9b8afb] border-[#9b8afb]/30' :
@@ -303,50 +308,52 @@ export const ContactsPage: React.FC<ContactsProps> = ({ onSelectContact }) => {
 
                   <td className="py-3.5 px-4 text-[#a7adc0]">{c.ownerName}</td>
 
-                  <td className="py-3.5 px-4 text-right space-x-1">
-                    <button
-                      onClick={() => onSelectContact(c)}
-                      className="px-2.5 py-1 rounded bg-[#101323] text-slate-200 text-[11px] font-semibold hover:bg-[#171c33]"
-                    >
-                      Profile
-                    </button>
-
-                    {canCreate && (
+                  <td className="py-3.5 px-4 text-right">
+                    <div className="flex items-center justify-end gap-1.5">
                       <button
-                        onClick={() => {
-                          setEditingContact(c);
-                          setFormData({
-                            name: c.name,
-                            licenseNumber: c.licenseNumber,
-                            brokerage: c.brokerage,
-                            email: c.email,
-                            phone: c.phone,
-                            market: c.market,
-                            status: c.status,
-                            ownerId: c.ownerId,
-                            ownerName: c.ownerName,
-                            tags: c.tags,
-                            grade: c.grade,
-                            score: c.score
-                          });
-                          setShowAddModal(true);
-                        }}
-                        className="p-1 rounded bg-[#101323] text-[#737b91] hover:text-white"
-                        title="Edit Contact"
+                        onClick={() => onSelectContact(c)}
+                        className="px-2.5 py-1 rounded-lg bg-[#101323] border border-[#202641] text-[#f5f5f7] hover:bg-[#171c33] hover:border-[#7c5cfc]/40 text-[11px] font-semibold transition-all"
                       >
-                        <Edit2 className="w-3.5 h-3.5" />
+                        Profile
                       </button>
-                    )}
 
-                    {canCreate && (
-                      <button
-                        onClick={() => setArchivingContactId(c.id)}
-                        className="p-1 rounded bg-[#101323] text-[#d05a72] hover:bg-[#d05a72]/20"
-                        title="Archive Contact"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    )}
+                      {canCreate && (
+                        <button
+                          onClick={() => {
+                            setEditingContact(c);
+                            setFormData({
+                              name: c.name,
+                              licenseNumber: c.licenseNumber,
+                              brokerage: c.brokerage,
+                              email: c.email,
+                              phone: c.phone,
+                              market: c.market,
+                              status: c.status,
+                              ownerId: c.ownerId,
+                              ownerName: c.ownerName,
+                              tags: c.tags,
+                              grade: c.grade,
+                              score: c.score
+                            });
+                            setShowAddModal(true);
+                          }}
+                          className="p-1.5 rounded-lg bg-[#101323] border border-[#202641] text-[#a7adc0] hover:text-white hover:border-[#7c5cfc]/40 transition-all"
+                          title="Edit Realtor"
+                        >
+                          <Edit2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+
+                      {canCreate && (
+                        <button
+                          onClick={() => setArchivingContactId(c.id)}
+                          className="p-1.5 rounded-lg bg-[#101323] border border-[#202641] text-[#d05a72] hover:bg-[#d05a72]/15 hover:border-[#d05a72]/40 transition-all"
+                          title="Archive Realtor"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
