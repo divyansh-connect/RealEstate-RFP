@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from './context/AppContext';
 import { LoginPage } from './components/LoginPage';
 import { AppShell } from './components/AppShell';
@@ -23,6 +23,13 @@ export const MainAppContent: React.FC = () => {
   const [selectedContact, setSelectedContact] = useState<RealtorContact | null>(null);
   const [selectedDeal, setSelectedDeal] = useState<PropertyDeal | null>(null);
   const [callingContact, setCallingContact] = useState<RealtorContact | null>(null);
+
+  // Always reset active view tab to 'dashboard' when logging in
+  useEffect(() => {
+    if (isAuthenticated) {
+      setActiveTab('dashboard');
+    }
+  }, [isAuthenticated]);
 
   if (!isAuthenticated) {
     return <LoginPage />;

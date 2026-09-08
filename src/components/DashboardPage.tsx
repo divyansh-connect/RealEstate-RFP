@@ -74,16 +74,13 @@ export const DashboardPage: React.FC<DashboardProps> = ({ onNavigate }) => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
         {/* Contact Metric */}
-        <div
-          onClick={() => onNavigate('contacts')}
-          className="executive-panel executive-panel-hover rounded-2xl p-5 cursor-pointer group"
-        >
+        <div className="executive-panel rounded-2xl p-5">
           <div className="flex justify-between items-start mb-3">
             <div className="p-2.5 rounded-xl bg-[#101323] border border-[#202641] text-[#a7adc0]">
               <Users className="w-5 h-5" />
             </div>
-            <span className="text-[10px] font-mono text-[#737b91] group-hover:text-[#9b8afb] flex items-center gap-0.5">
-              Inspect <ArrowUpRight className="w-3 h-3" />
+            <span className="text-[10px] font-mono text-[#737b91]">
+              Metrics
             </span>
           </div>
           <div className="text-2xl font-bold text-[#f5f5f7] tracking-tight">{totalContacts}</div>
@@ -96,16 +93,13 @@ export const DashboardPage: React.FC<DashboardProps> = ({ onNavigate }) => {
         </div>
 
         {/* Outreach Metric */}
-        <div
-          onClick={() => onNavigate('contacts')}
-          className="executive-panel executive-panel-hover rounded-2xl p-5 cursor-pointer group"
-        >
+        <div className="executive-panel rounded-2xl p-5">
           <div className="flex justify-between items-start mb-3">
             <div className="p-2.5 rounded-xl bg-[#101323] border border-[#202641] text-[#a7adc0]">
               <Send className="w-5 h-5" />
             </div>
-            <span className="text-[10px] font-mono text-[#737b91] group-hover:text-[#9b8afb] flex items-center gap-0.5">
-              Activity <ArrowUpRight className="w-3 h-3" />
+            <span className="text-[10px] font-mono text-[#737b91]">
+              Activity
             </span>
           </div>
           <div className="text-2xl font-bold text-[#f5f5f7] tracking-tight">1,482</div>
@@ -118,16 +112,13 @@ export const DashboardPage: React.FC<DashboardProps> = ({ onNavigate }) => {
         </div>
 
         {/* Conversation Metric */}
-        <div
-          onClick={() => onNavigate('conversations')}
-          className="executive-panel executive-panel-hover rounded-2xl p-5 cursor-pointer group"
-        >
+        <div className="executive-panel rounded-2xl p-5">
           <div className="flex justify-between items-start mb-3">
             <div className="p-2.5 rounded-xl bg-[#7c5cfc]/15 text-[#9b8afb] border border-[#7c5cfc]/30">
               <MessageSquare className="w-5 h-5" />
             </div>
-            <span className="text-[10px] font-mono text-[#737b91] group-hover:text-[#9b8afb] flex items-center gap-0.5">
-              Inbox <ArrowUpRight className="w-3 h-3" />
+            <span className="text-[10px] font-mono text-[#737b91]">
+              Inbox
             </span>
           </div>
           <div className="text-2xl font-bold text-[#f5f5f7] tracking-tight">{conversations.length}</div>
@@ -140,16 +131,13 @@ export const DashboardPage: React.FC<DashboardProps> = ({ onNavigate }) => {
         </div>
 
         {/* Deals Metric */}
-        <div
-          onClick={() => onNavigate('deals')}
-          className="executive-panel executive-panel-hover rounded-2xl p-5 cursor-pointer group"
-        >
+        <div className="executive-panel rounded-2xl p-5">
           <div className="flex justify-between items-start mb-3">
             <div className="p-2.5 rounded-xl bg-[#101323] border border-[#202641] text-[#a7adc0]">
               <Building className="w-5 h-5" />
             </div>
-            <span className="text-[10px] font-mono text-[#737b91] group-hover:text-[#9b8afb] flex items-center gap-0.5">
-              Pipeline <ArrowUpRight className="w-3 h-3" />
+            <span className="text-[10px] font-mono text-[#737b91]">
+              Pipeline
             </span>
           </div>
           <div className="text-2xl font-bold text-[#f5f5f7] tracking-tight">${(activePipelineValue / 1000000).toFixed(2)}M</div>
