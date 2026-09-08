@@ -90,10 +90,10 @@ export const LeadQueuePage: React.FC<LeadQueueProps> = ({ onNavigate }) => {
       </div>
 
       {/* TABS */}
-      <div className="flex border-b border-[#202641] space-x-4">
+      <div className="flex border-b border-[#202641] space-x-4 overflow-x-auto no-scrollbar">
         <button
           onClick={() => setActiveTab('address')}
-          className={`pb-3 text-xs font-bold border-b-2 flex items-center gap-2 transition-all cursor-pointer ${
+          className={`pb-3 text-xs font-bold border-b-2 flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
             activeTab === 'address' ? 'border-[#7c5cfc] text-[#9b8afb]' : 'border-transparent text-[#737b91] hover:text-slate-200'
           }`}
         >
@@ -102,7 +102,7 @@ export const LeadQueuePage: React.FC<LeadQueueProps> = ({ onNavigate }) => {
 
         <button
           onClick={() => setActiveTab('needs_human')}
-          className={`pb-3 text-xs font-bold border-b-2 flex items-center gap-2 transition-all cursor-pointer ${
+          className={`pb-3 text-xs font-bold border-b-2 flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
             activeTab === 'needs_human' ? 'border-[#7c5cfc] text-[#9b8afb]' : 'border-transparent text-[#737b91] hover:text-slate-200'
           }`}
         >
@@ -123,36 +123,36 @@ export const LeadQueuePage: React.FC<LeadQueueProps> = ({ onNavigate }) => {
             return (
               <div
                 key={conv.id}
-                className="executive-panel executive-panel-hover rounded-2xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
+                className="executive-panel executive-panel-hover rounded-2xl p-4 sm:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 overflow-hidden"
               >
-                <div className="space-y-2 flex-1">
+                <div className="space-y-2 flex-1 w-full min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="w-7 h-7 rounded-lg font-bold text-xs flex items-center justify-center bg-[#101323] text-[#9b8afb] border border-[#202641]">
+                    <span className="w-7 h-7 rounded-lg font-bold text-xs flex items-center justify-center bg-[#101323] text-[#9b8afb] border border-[#202641] shrink-0">
                       {conv.grade}
                     </span>
-                    <span className="font-bold text-white text-sm">{conv.realtorName}</span>
-                    <span className="text-[#a7adc0] text-xs font-normal">({conv.brokerage})</span>
+                    <span className="font-bold text-white text-sm truncate">{conv.realtorName}</span>
+                    <span className="text-[#a7adc0] text-xs font-normal shrink-0">({conv.brokerage})</span>
                     
                     {/* OWNER BADGE */}
                     {isAssigned ? (
-                      <span className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-[#35b77a]/15 text-[#35b77a] border border-[#35b77a]/30 flex items-center gap-1">
+                      <span className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-[#35b77a]/15 text-[#35b77a] border border-[#35b77a]/30 flex items-center gap-1 shrink-0">
                         <UserCheck className="w-3 h-3" /> Assigned to {conv.assignedOwnerName}
                       </span>
                     ) : (
-                      <span className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                      <span className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20 shrink-0">
                         Unassigned
                       </span>
                     )}
 
-                    <span className="text-[10px] text-[#737b91] font-mono ml-auto md:ml-2">&bull; {conv.timestamp}</span>
+                    <span className="text-[10px] text-[#737b91] font-mono ml-auto md:ml-2 shrink-0">&bull; {conv.timestamp}</span>
                   </div>
 
-                  <p className="text-xs text-slate-300 bg-[#070811] p-3 rounded-xl border border-[#202641]">
+                  <p className="text-xs text-slate-300 bg-[#070811] p-3 rounded-xl border border-[#202641] break-words">
                     "{conv.latestMessage}"
                   </p>
 
                   {conv.propertyCaptured && (
-                    <div className="flex items-center gap-3 text-xs text-[#35b77a] font-medium">
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-[#35b77a] font-medium">
                       <span>📍 {conv.propertyCaptured.address}, {conv.propertyCaptured.city}</span>
                       <span>&bull;</span>
                       <span>Asking: ${conv.propertyCaptured.askingPrice.toLocaleString()}</span>
@@ -161,12 +161,12 @@ export const LeadQueuePage: React.FC<LeadQueueProps> = ({ onNavigate }) => {
                 </div>
 
                 {/* ACTION BUTTONS */}
-                <div className="flex items-center gap-2 w-full md:w-auto justify-end pt-3 md:pt-0 border-t md:border-t-0 border-[#202641]">
+                <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-start sm:justify-end pt-3 md:pt-0 border-t md:border-t-0 border-[#202641]">
                   {!isReadOnly && (
                     <>
                       {/* ADMIN / MANAGER REASSIGNMENT SELECTOR */}
                       {isAdminOrManager && (
-                        <div className="relative flex items-center">
+                        <div className="relative flex items-center flex-1 sm:flex-initial min-w-[130px]">
                           <select
                             value={conv.assignedOwnerId || ''}
                             onChange={(e) => {
@@ -175,7 +175,7 @@ export const LeadQueuePage: React.FC<LeadQueueProps> = ({ onNavigate }) => {
                                 handleClaim(conv.id, selectedUser.id, selectedUser.name);
                               }
                             }}
-                            className="px-3 py-2 bg-[#101323] border border-[#202641] hover:border-[#7c5cfc]/40 text-slate-200 text-xs font-semibold rounded-xl transition-all appearance-none pr-8 cursor-pointer focus:outline-none focus:border-[#7c5cfc]"
+                            className="w-full px-3 py-2 bg-[#101323] border border-[#202641] hover:border-[#7c5cfc]/40 text-slate-200 text-xs font-semibold rounded-xl transition-all appearance-none pr-8 cursor-pointer focus:outline-none focus:border-[#7c5cfc] truncate"
                           >
                             <option value="" disabled>Assign Owner...</option>
                             {users.map(u => (
@@ -192,7 +192,7 @@ export const LeadQueuePage: React.FC<LeadQueueProps> = ({ onNavigate }) => {
                       {(!isAssigned || conv.assignedOwnerId !== currentUser.id) && (
                         <button
                           onClick={() => handleClaim(conv.id)}
-                          className="px-4 py-2 bg-[#7c5cfc] hover:bg-[#6847e8] text-white text-xs font-bold rounded-xl transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
+                          className="flex-1 sm:flex-initial px-3.5 py-2 bg-[#7c5cfc] hover:bg-[#6847e8] text-white text-xs font-bold rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
                         >
                           <UserCheck className="w-3.5 h-3.5" />
                           {isAssigned ? 'Reassign to Me' : 'Claim Lead'}
@@ -203,7 +203,7 @@ export const LeadQueuePage: React.FC<LeadQueueProps> = ({ onNavigate }) => {
 
                   <button
                     onClick={() => onNavigate('conversations', conv.id)}
-                    className="px-4 py-2 bg-[#101323] border border-[#202641] hover:border-[#7c5cfc]/40 text-slate-200 text-xs font-semibold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
+                    className="flex-1 sm:flex-initial px-3.5 py-2 bg-[#101323] border border-[#202641] hover:border-[#7c5cfc]/40 text-slate-200 text-xs font-semibold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
                   >
                     <MessageSquare className="w-3.5 h-3.5 text-[#9b8afb]" /> Open Thread
                   </button>

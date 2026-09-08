@@ -67,15 +67,18 @@ export const DealsPage: React.FC<DealsProps> = ({ onSelectDeal }) => {
 
   const handleDragStart = (e: React.DragEvent, dealId: string) => {
     e.dataTransfer.setData('dealId', dealId);
+    e.dataTransfer.setData('text/plain', dealId);
+    e.dataTransfer.effectAllowed = 'move';
   };
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
   };
 
   const handleDrop = (e: React.DragEvent, targetStage: DealStage) => {
     e.preventDefault();
-    const dealId = e.dataTransfer.getData('dealId');
+    const dealId = e.dataTransfer.getData('dealId') || e.dataTransfer.getData('text/plain');
     if (dealId && currentUser.role !== 'READ_ONLY') {
       updateDealStage(dealId, targetStage);
     }
@@ -207,7 +210,11 @@ export const DealsPage: React.FC<DealsProps> = ({ onSelectDeal }) => {
                   </span>
                 </div>
 
-                <div className="flex-1 overflow-y-auto space-y-3 pr-1">
+                <div
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleDrop(e, stage)}
+                  className="flex-1 overflow-y-auto space-y-3 pr-1"
+                >
                   {stageDeals.map((deal) => (
                     <div
                       key={deal.id}

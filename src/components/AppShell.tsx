@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import type { UserRole } from '../types/crm';
 import {
@@ -33,6 +33,22 @@ export const AppShell: React.FC<ShellProps> = ({ children, activeTab, setActiveT
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showRoleSelector, setShowRoleSelector] = useState(false);
+
+  const headerActionsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (headerActionsRef.current && !headerActionsRef.current.contains(event.target as Node)) {
+        setShowRoleSelector(false);
+        setShowNotifications(false);
+        setShowProfileMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const unreadNotifications = notifications.filter(n => !n.read);
 
@@ -95,12 +111,16 @@ export const AppShell: React.FC<ShellProps> = ({ children, activeTab, setActiveT
         </div>
 
         {/* Right Header Actions */}
-        <div className="flex items-center gap-3">
-          
+        <div ref={headerActionsRef} className="flex items-center gap-3 relative">
+
           {/* Quick Role Switcher Pill */}
-          <div className="relative">
+          <div className="relative z-50">
             <button
-              onClick={() => setShowRoleSelector(!showRoleSelector)}
+              onClick={() => {
+                setShowRoleSelector(!showRoleSelector);
+                setShowNotifications(false);
+                setShowProfileMenu(false);
+              }}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#7c5cfc]/40 bg-[#7c5cfc]/10 text-[#9b8afb] text-xs font-bold uppercase tracking-wider transition-all cursor-pointer hover:bg-[#7c5cfc]/20"
             >
               <Shield className="w-3.5 h-3.5 text-[#7c5cfc]" />
@@ -132,9 +152,13 @@ export const AppShell: React.FC<ShellProps> = ({ children, activeTab, setActiveT
           </div>
 
           {/* Notifications Bell */}
-          <div className="relative">
+          <div className="relative z-50">
             <button
-              onClick={() => setShowNotifications(!showNotifications)}
+              onClick={() => {
+                setShowNotifications(!showNotifications);
+                setShowRoleSelector(false);
+                setShowProfileMenu(false);
+              }}
               className="p-2 rounded-xl border border-[#202641] bg-[#101323] hover:bg-[#171c33] text-[#a7adc0] transition-all relative cursor-pointer"
             >
               <Bell className="w-4 h-4 text-[#a7adc0]" />
@@ -175,9 +199,13 @@ export const AppShell: React.FC<ShellProps> = ({ children, activeTab, setActiveT
           </div>
 
           {/* User Profile */}
-          <div className="relative">
+          <div className="relative z-50">
             <button
-              onClick={() => setShowProfileMenu(!showProfileMenu)}
+              onClick={() => {
+                setShowProfileMenu(!showProfileMenu);
+                setShowRoleSelector(false);
+                setShowNotifications(false);
+              }}
               className="flex items-center gap-2 p-1.5 rounded-xl border border-[#202641] bg-[#101323] hover:bg-[#171c33] transition-all cursor-pointer"
             >
               <div className="w-7 h-7 rounded-lg bg-[#7c5cfc]/20 text-[#9b8afb] font-bold text-xs flex items-center justify-center border border-[#7c5cfc]/30">
@@ -196,7 +224,10 @@ export const AppShell: React.FC<ShellProps> = ({ children, activeTab, setActiveT
                   <div className="text-[11px] text-[#a7adc0]">{currentUser.email}</div>
                 </div>
                 <button
-                  onClick={logout}
+                  onClick={() => {
+                    logout();
+                    setShowProfileMenu(false);
+                  }}
                   className="w-full text-left px-3 py-2 rounded-lg text-xs text-[#d05a72] hover:bg-[#d05a72]/10 flex items-center gap-2 font-medium"
                 >
                   <LogOut className="w-3.5 h-3.5" /> Sign Out

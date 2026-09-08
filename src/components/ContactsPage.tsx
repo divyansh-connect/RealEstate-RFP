@@ -426,7 +426,7 @@ export const ContactsPage: React.FC<ContactsProps> = ({ onSelectContact }) => {
                         email: 'j.sterling@sothebys.com',
                         phone: '(214) 771-0099',
                         market: 'Dallas Metro - Southlake',
-                        status: 'Enrolled',
+                        status: 'Active in Outreach',
                         ownerId: currentUser.id,
                         ownerName: currentUser.name,
                         tags: ['Imported CSV'],
