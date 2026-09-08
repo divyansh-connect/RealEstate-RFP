@@ -12,11 +12,14 @@ export interface UserProfile {
 
 export type ContactStatus = 
   | 'Active in Outreach'
+  | 'Enrolled'
   | 'Responded'
+  | 'Engaged'
   | 'Escalated'
   | 'Declined'
   | 'Opted Out'
-  | 'Do Not Contact';
+  | 'Do Not Contact'
+  | 'Archived';
 export type Grade = 'A' | 'B' | 'C' | 'D';
 
 export interface RealtorContact {

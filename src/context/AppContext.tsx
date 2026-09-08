@@ -293,41 +293,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
 
     logAuditAction(`Claimed lead (assigned to ${targetUserName})`, `Conversation #${conversationId}`);
-
-    // Create deal if property captured and deal doesn't exist yet
-    if (conv.propertyCaptured && !deals.some(d => d.conversationId === conversationId)) {
-      const newDeal: PropertyDeal = {
-        id: `dl-${Date.now()}`,
-        conversationId,
-        contactId: conv.contactId,
-        address: conv.propertyCaptured.address,
-        city: conv.propertyCaptured.city,
-        state: conv.propertyCaptured.state,
-        zip: conv.propertyCaptured.zip,
-        askingPrice: conv.propertyCaptured.askingPrice,
-        beds: conv.propertyCaptured.beds,
-        baths: conv.propertyCaptured.baths,
-        sqft: conv.propertyCaptured.sqft,
-        yearBuilt: 2005,
-        propertyType: 'Single Family Residence',
-        stage: 'Qualifying',
-        isAiInbound: true,
-        ownerId: targetUserId,
-        ownerName: targetUserName,
-        grade: conv.grade,
-        score: conv.score,
-        realtorName: conv.realtorName,
-        realtorBrokerage: conv.brokerage,
-        realtorPhone: conv.realtorPhone,
-        realtorEmail: conv.realtorEmail,
-        createdAt: 'Just now',
-        updatedAt: 'Just now',
-        source: 'AI Conversation Capture'
-      };
-      setDeals(prev => [newDeal, ...prev]);
-    }
-
-    logAuditAction(`Assigned/claimed lead to ${targetUserName}`, `Conversation #${conversationId}`);
   };
 
   const markNotificationRead = (id: string) => {
