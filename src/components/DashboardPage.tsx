@@ -155,32 +155,32 @@ export const DashboardPage: React.FC<DashboardProps> = ({ onNavigate }) => {
         {/* Grade Distribution Breakdown - AI Qualification Card */}
         <div className="executive-panel rounded-2xl p-5 sm:p-6 lg:col-span-1 flex flex-col justify-between relative overflow-hidden border-[#7c5cfc]/30 shadow-[0_0_20px_rgba(124,92,252,0.08)]">
           <div>
-            <div className="flex justify-between items-center mb-4">
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-[#7c5cfc]/20 text-[#a855f7] border border-[#7c5cfc]/30">
+            <div className="flex items-center justify-between gap-2 mb-4">
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="p-1.5 rounded-lg bg-[#7c5cfc]/20 text-[#a855f7] border border-[#7c5cfc]/30 shrink-0">
                   <Bot className="w-4 h-4" />
                 </div>
-                <h3 className="text-xs font-bold text-white uppercase tracking-wider truncate">AI Qualification Telemetry</h3>
+                <h3 className="text-[11px] sm:text-xs font-bold text-white uppercase tracking-wider truncate">AI Qualification Telemetry</h3>
               </div>
-              <button onClick={() => onNavigate('conversations')} className="text-xs text-[#9b8afb] hover:underline shrink-0">Details &rarr;</button>
+              <button onClick={() => onNavigate('conversations')} className="text-xs text-[#9b8afb] hover:underline shrink-0 whitespace-nowrap">Details &rarr;</button>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-6 text-center">
-              <div className="p-2.5 sm:p-3 rounded-xl bg-[#070811] border border-[#35b77a]/30">
-                <div className="text-lg sm:text-xl font-bold text-[#35b77a]">{gradeACount}</div>
-                <div className="text-[10px] uppercase font-bold text-[#737b91] mt-0.5 truncate">Grade A</div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2 mb-6 text-center">
+              <div className="p-2 sm:p-2.5 rounded-xl bg-[#070811] border border-[#35b77a]/30">
+                <div className="text-base sm:text-lg font-bold text-[#35b77a]">{gradeACount}</div>
+                <div className="text-[9px] sm:text-[10px] uppercase font-bold text-[#737b91] mt-0.5 whitespace-nowrap">Grade A</div>
               </div>
-              <div className="p-2.5 sm:p-3 rounded-xl bg-[#070811] border border-[#5965d8]/30">
-                <div className="text-lg sm:text-xl font-bold text-[#5965d8]">{gradeBCount}</div>
-                <div className="text-[10px] uppercase font-bold text-[#737b91] mt-0.5 truncate">Grade B</div>
+              <div className="p-2 sm:p-2.5 rounded-xl bg-[#070811] border border-[#5965d8]/30">
+                <div className="text-base sm:text-lg font-bold text-[#5965d8]">{gradeBCount}</div>
+                <div className="text-[9px] sm:text-[10px] uppercase font-bold text-[#737b91] mt-0.5 whitespace-nowrap">Grade B</div>
               </div>
-              <div className="p-2.5 sm:p-3 rounded-xl bg-[#070811] border border-[#9b8afb]/30">
-                <div className="text-lg sm:text-xl font-bold text-[#9b8afb]">{gradeCCount}</div>
-                <div className="text-[10px] uppercase font-bold text-[#737b91] mt-0.5 truncate">Grade C</div>
+              <div className="p-2 sm:p-2.5 rounded-xl bg-[#070811] border border-[#9b8afb]/30">
+                <div className="text-base sm:text-lg font-bold text-[#9b8afb]">{gradeCCount}</div>
+                <div className="text-[9px] sm:text-[10px] uppercase font-bold text-[#737b91] mt-0.5 whitespace-nowrap">Grade C</div>
               </div>
-              <div className="p-2.5 sm:p-3 rounded-xl bg-[#070811] border border-[#d05a72]/30">
-                <div className="text-lg sm:text-xl font-bold text-[#d05a72]">{gradeDCount}</div>
-                <div className="text-[10px] uppercase font-bold text-[#737b91] mt-0.5 truncate">Grade D</div>
+              <div className="p-2 sm:p-2.5 rounded-xl bg-[#070811] border border-[#d05a72]/30">
+                <div className="text-base sm:text-lg font-bold text-[#d05a72]">{gradeDCount}</div>
+                <div className="text-[9px] sm:text-[10px] uppercase font-bold text-[#737b91] mt-0.5 whitespace-nowrap">Grade D</div>
               </div>
             </div>
           </div>
