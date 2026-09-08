@@ -40,7 +40,7 @@ interface AppContextType {
   updateDeal: (dealId: string, updates: Partial<PropertyDeal>) => void;
   archiveDeal: (dealId: string) => void;
   addGeneratedContract: (dealId: string, contract: { templateName: string; fileName: string; fileType: 'pdf' | 'docx'; generatedBy: string }) => void;
-  claimLead: (conversationId: string) => void;
+  claimLead: (conversationId: string, assignedUserId?: string, assignedUserName?: string) => void;
   
   // Notifications & Audit Logs
   notifications: AppNotification[];
@@ -256,12 +256,45 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     logAuditAction(`Generated contract version ${contractObj.version}`, `Deal #${dealId}`);
   };
 
-  const claimLead = (conversationId: string) => {
+  const claimLead = (conversationId: string, assignedUserId?: string, assignedUserName?: string) => {
+    const targetUserId = assignedUserId || currentUser.id;
+    const targetUserName = assignedUserName || currentUser.name;
+
     const conv = conversations.find(c => c.id === conversationId);
     if (!conv) return;
 
-    toggleAiTakeover(conversationId, 'Human Takeover');
+    // Update conversation assignedOwner, status to Assigned, and switch AI to Human Takeover
+    setConversations(prev => prev.map(c => {
+      if (c.id === conversationId) {
+        return {
+          ...c,
+          assignedOwnerId: targetUserId,
+          assignedOwnerName: targetUserName,
+          status: 'Assigned',
+          aiStatus: 'Human Takeover'
+        };
+      }
+      return c;
+    }));
 
+    // Update Realtor Contact owner if matching contact exists
+    if (conv.contactId) {
+      setContacts(prev => prev.map(cnt => {
+        if (cnt.id === conv.contactId) {
+          return {
+            ...cnt,
+            ownerId: targetUserId,
+            ownerName: targetUserName,
+            status: 'Engaged'
+          };
+        }
+        return cnt;
+      }));
+    }
+
+    logAuditAction(`Claimed lead (assigned to ${targetUserName})`, `Conversation #${conversationId}`);
+
+    // Create deal if property captured and deal doesn't exist yet
     if (conv.propertyCaptured && !deals.some(d => d.conversationId === conversationId)) {
       const newDeal: PropertyDeal = {
         id: `dl-${Date.now()}`,
@@ -279,8 +312,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         propertyType: 'Single Family Residence',
         stage: 'Qualifying',
         isAiInbound: true,
-        ownerId: currentUser.id,
-        ownerName: currentUser.name,
+        ownerId: targetUserId,
+        ownerName: targetUserName,
         grade: conv.grade,
         score: conv.score,
         realtorName: conv.realtorName,
@@ -293,7 +326,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       };
       setDeals(prev => [newDeal, ...prev]);
     }
-    logAuditAction(`Claimed lead & assigned ownership to ${currentUser.name}`, `Conversation #${conversationId}`);
+
+    logAuditAction(`Assigned/claimed lead to ${targetUserName}`, `Conversation #${conversationId}`);
   };
 
   const markNotificationRead = (id: string) => {

@@ -72,8 +72,10 @@ export interface Conversation {
   grade: Grade;
   score: number;
   gradeReason: string;
-  status: 'Needs Human' | 'Leads With Address' | 'Interested' | 'Not Interested' | 'Questions' | 'Wants Call' | 'Unclear' | 'Opt-out';
+  status: 'Needs Human' | 'Leads With Address' | 'Interested' | 'Not Interested' | 'Questions' | 'Wants Call' | 'Unclear' | 'Opt-out' | 'Assigned';
   aiStatus: AIStatus;
+  assignedOwnerId?: string;
+  assignedOwnerName?: string;
   unread: boolean;
   classification: ClassificationType;
   messages: Message[];
