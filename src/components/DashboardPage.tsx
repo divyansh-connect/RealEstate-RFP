@@ -3,7 +3,7 @@ import { useApp } from '../context/AppContext';
 import { Users, Send, MessageSquare, Building, ArrowUpRight, Flame, Bot, Sparkles } from 'lucide-react';
 
 interface DashboardProps {
-  onNavigate: (tab: string) => void;
+  onNavigate: (tab: string, convId?: string) => void;
 }
 
 export const DashboardPage: React.FC<DashboardProps> = ({ onNavigate }) => {

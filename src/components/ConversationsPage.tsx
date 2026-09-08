@@ -79,13 +79,13 @@ export const ConversationsPage: React.FC = () => {
       {/* HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 flex-shrink-0">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-            Conversations Workspace
-            <span className="px-2 py-0.5 rounded-full text-xs font-mono bg-[#7c5cfc]/15 text-[#9b8afb] border border-[#7c5cfc]/30">
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white flex flex-wrap items-center gap-2">
+            <span>Conversations Workspace</span>
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-mono bg-[#7c5cfc]/15 text-[#9b8afb] border border-[#7c5cfc]/30 shrink-0 whitespace-nowrap">
               {conversations.length} Active Dialogs
             </span>
           </h1>
-          <p className="text-xs text-[#a7adc0]">
+          <p className="text-xs text-[#a7adc0] mt-1">
             Real-time SMS dialogs, address extraction, AI takeover switches, and conversation qualification scoring.
           </p>
         </div>
@@ -93,7 +93,7 @@ export const ConversationsPage: React.FC = () => {
         {activeConv && activeConv.status === 'Needs Human' && !isReadOnly && (
           <button
             onClick={() => claimLead(activeConv.id)}
-            className="px-4 py-2 bg-[#7c5cfc] hover:bg-[#6847e8] text-white font-bold text-xs rounded-xl shadow-lg shadow-[#7c5cfc]/20 transition-all flex items-center gap-2 cursor-pointer self-start sm:self-auto"
+            className="px-4 py-2 bg-[#7c5cfc] hover:bg-[#6847e8] text-white font-bold text-xs rounded-xl shadow-lg shadow-[#7c5cfc]/20 transition-all flex items-center justify-center gap-2 cursor-pointer self-start sm:self-auto shrink-0 whitespace-nowrap"
           >
             <Flame className="w-4 h-4" /> Claim & Take Over
           </button>
