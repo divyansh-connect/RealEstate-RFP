@@ -22,12 +22,12 @@ interface ContactsProps {
 
 export const ContactsPage: React.FC<ContactsProps> = ({ onSelectContact }) => {
   const { contacts, addContact, updateContact, archiveContact, bulkUpdateContacts, importContacts, currentUser } = useApp();
-  
+
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [gradeFilter, setGradeFilter] = useState<string>('ALL');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  
+
   // Modals state
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingContact, setEditingContact] = useState<RealtorContact | null>(null);
@@ -57,7 +57,7 @@ export const ContactsPage: React.FC<ContactsProps> = ({ onSelectContact }) => {
       c.brokerage.toLowerCase().includes(search.toLowerCase()) ||
       c.email.toLowerCase().includes(search.toLowerCase()) ||
       c.phone.includes(search);
-    
+
     const matchesStatus = statusFilter === 'ALL' || c.status === statusFilter;
     const matchesGrade = gradeFilter === 'ALL' || c.grade === gradeFilter;
 
@@ -99,7 +99,7 @@ export const ContactsPage: React.FC<ContactsProps> = ({ onSelectContact }) => {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
-      
+
       {/* Header & Main CTAs */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -263,7 +263,7 @@ export const ContactsPage: React.FC<ContactsProps> = ({ onSelectContact }) => {
                       />
                     </td>
                   )}
-                  
+
                   <td className="py-3.5 px-4 cursor-pointer" onClick={() => onSelectContact(c)}>
                     <div className="font-bold text-white group-hover:text-[#9b8afb] transition-colors">
                       {c.name}
@@ -283,25 +283,23 @@ export const ContactsPage: React.FC<ContactsProps> = ({ onSelectContact }) => {
                   <td className="py-3.5 px-4 text-[#a7adc0]">{c.market}</td>
 
                   <td className="py-3.5 px-4">
-                    <span className={`px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${
-                      c.status === 'Responded' ? 'bg-[#35b77a]/15 text-[#35b77a] border border-[#35b77a]/30' :
+                    <span className={`px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${c.status === 'Responded' ? 'bg-[#35b77a]/15 text-[#35b77a] border border-[#35b77a]/30' :
                       c.status === 'Active in Outreach' ? 'bg-[#7c5cfc]/15 text-[#9b8afb] border border-[#7c5cfc]/30' :
-                      c.status === 'Escalated' ? 'bg-[#7c5cfc] text-white shadow-sm' :
-                      c.status === 'Declined' ? 'bg-[#101323] text-[#a7adc0] border border-[#202641]' :
-                      'bg-[#d05a72]/15 text-[#d05a72] border border-[#d05a72]/30'
-                    }`}>
+                        c.status === 'Escalated' ? 'bg-[#7c5cfc] text-white shadow-sm' :
+                          c.status === 'Declined' ? 'bg-[#101323] text-[#a7adc0] border border-[#202641]' :
+                            'bg-[#d05a72]/15 text-[#d05a72] border border-[#d05a72]/30'
+                      }`}>
                       {c.status}
                     </span>
                   </td>
 
                   <td className="py-3.5 px-4">
                     <div className="flex items-center gap-1.5">
-                      <span className={`w-6 h-6 rounded font-bold text-xs flex items-center justify-center border ${
-                        c.grade === 'A' ? 'bg-[#35b77a]/15 text-[#35b77a] border-[#35b77a]/30' :
+                      <span className={`w-6 h-6 rounded-lg font-bold text-xs flex items-center justify-center border ${c.grade === 'A' ? 'bg-[#35b77a]/15 text-[#35b77a] border-[#35b77a]/30' :
                         c.grade === 'B' ? 'bg-[#5965d8]/15 text-[#5965d8] border-[#5965d8]/30' :
-                        c.grade === 'C' ? 'bg-[#9b8afb]/15 text-[#9b8afb] border-[#9b8afb]/30' :
-                        'bg-[#d05a72]/15 text-[#d05a72] border-[#d05a72]/30'
-                      }`}>
+                          c.grade === 'C' ? 'bg-[#9b8afb]/15 text-[#9b8afb] border-[#9b8afb]/30' :
+                            'bg-[#d05a72]/15 text-[#d05a72] border-[#d05a72]/30'
+                        }`}>
                         {c.grade}
                       </span>
                       <span className="font-mono text-[#737b91] text-[11px]">{c.score}</span>
@@ -310,50 +308,52 @@ export const ContactsPage: React.FC<ContactsProps> = ({ onSelectContact }) => {
 
                   <td className="py-3.5 px-4 text-[#a7adc0]">{c.ownerName}</td>
 
-                  <td className="py-3.5 px-4 text-right space-x-1">
-                    <button
-                      onClick={() => onSelectContact(c)}
-                      className="px-2.5 py-1 rounded bg-[#101323] text-slate-200 text-[11px] font-semibold hover:bg-[#171c33]"
-                    >
-                      Profile
-                    </button>
-
-                    {canCreate && (
+                  <td className="py-3.5 px-4 text-right">
+                    <div className="flex items-center justify-end gap-1.5">
                       <button
-                        onClick={() => {
-                          setEditingContact(c);
-                          setFormData({
-                            name: c.name,
-                            licenseNumber: c.licenseNumber,
-                            brokerage: c.brokerage,
-                            email: c.email,
-                            phone: c.phone,
-                            market: c.market,
-                            status: c.status,
-                            ownerId: c.ownerId,
-                            ownerName: c.ownerName,
-                            tags: c.tags,
-                            grade: c.grade,
-                            score: c.score
-                          });
-                          setShowAddModal(true);
-                        }}
-                        className="p-1 rounded bg-[#101323] text-[#737b91] hover:text-white"
-                        title="Edit Contact"
+                        onClick={() => onSelectContact(c)}
+                        className="px-2.5 py-1 rounded-lg bg-[#101323] border border-[#202641] text-[#f5f5f7] hover:bg-[#171c33] hover:border-[#7c5cfc]/40 text-[11px] font-semibold transition-all"
                       >
-                        <Edit2 className="w-3.5 h-3.5" />
+                        Profile
                       </button>
-                    )}
 
-                    {canCreate && (
-                      <button
-                        onClick={() => setArchivingContactId(c.id)}
-                        className="p-1 rounded bg-[#101323] text-[#d05a72] hover:bg-[#d05a72]/20"
-                        title="Archive Contact"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    )}
+                      {canCreate && (
+                        <button
+                          onClick={() => {
+                            setEditingContact(c);
+                            setFormData({
+                              name: c.name,
+                              licenseNumber: c.licenseNumber,
+                              brokerage: c.brokerage,
+                              email: c.email,
+                              phone: c.phone,
+                              market: c.market,
+                              status: c.status,
+                              ownerId: c.ownerId,
+                              ownerName: c.ownerName,
+                              tags: c.tags,
+                              grade: c.grade,
+                              score: c.score
+                            });
+                            setShowAddModal(true);
+                          }}
+                          className="p-1.5 rounded-lg bg-[#101323] border border-[#202641] text-[#a7adc0] hover:text-white hover:border-[#7c5cfc]/40 transition-all"
+                          title="Edit Realtor"
+                        >
+                          <Edit2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+
+                      {canCreate && (
+                        <button
+                          onClick={() => setArchivingContactId(c.id)}
+                          className="p-1.5 rounded-lg bg-[#101323] border border-[#202641] text-[#d05a72] hover:bg-[#d05a72]/15 hover:border-[#d05a72]/40 transition-all"
+                          title="Archive Realtor"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -457,9 +457,9 @@ export const ContactsPage: React.FC<ContactsProps> = ({ onSelectContact }) => {
             <button onClick={() => setShowAddModal(false)} className="absolute top-5 right-5 text-[#737b91] hover:text-white">
               <X className="w-5 h-5" />
             </button>
-            
+
             <h3 className="text-lg font-bold text-white">{editingContact ? 'Edit Realtor Record' : 'Add Realtor Contact'}</h3>
-            
+
             <form onSubmit={handleCreateOrUpdateContact} className="space-y-3 text-xs">
               <div>
                 <label className="block text-[#a7adc0] font-semibold mb-1">Full Name</label>

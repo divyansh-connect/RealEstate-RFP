@@ -1,6 +1,6 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
-import { Users, Send, MessageSquare, Building, ArrowUpRight, Flame } from 'lucide-react';
+import { Users, Send, MessageSquare, Building, ArrowUpRight, Flame, Bot, Sparkles } from 'lucide-react';
 
 interface DashboardProps {
   onNavigate: (tab: string) => void;
@@ -97,7 +97,7 @@ export const DashboardPage: React.FC<DashboardProps> = ({ onNavigate }) => {
 
         {/* Outreach Metric */}
         <div
-          onClick={() => onNavigate('conversations')}
+          onClick={() => onNavigate('contacts')}
           className="executive-panel executive-panel-hover rounded-2xl p-5 cursor-pointer group"
         >
           <div className="flex justify-between items-start mb-3">
@@ -164,39 +164,44 @@ export const DashboardPage: React.FC<DashboardProps> = ({ onNavigate }) => {
       {/* SECOND ROW: AI QUALIFICATION & ACTION QUEUE */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        {/* Grade Distribution Breakdown */}
-        <div className="executive-panel rounded-2xl p-6 lg:col-span-1 flex flex-col justify-between">
+        {/* Grade Distribution Breakdown - AI Qualification Card */}
+        <div className="executive-panel rounded-2xl p-6 lg:col-span-1 flex flex-col justify-between relative overflow-hidden border-[#7c5cfc]/30 shadow-[0_0_20px_rgba(124,92,252,0.08)]">
           <div>
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xs font-bold text-white uppercase tracking-wider">AI Qualification Telemetry</h3>
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-[#7c5cfc]/20 text-[#a855f7] border border-[#7c5cfc]/30">
+                  <Bot className="w-4 h-4" />
+                </div>
+                <h3 className="text-xs font-bold text-white uppercase tracking-wider">AI Qualification Telemetry</h3>
+              </div>
               <button onClick={() => onNavigate('conversations')} className="text-xs text-[#9b8afb] hover:underline">Details &rarr;</button>
             </div>
 
             <div className="grid grid-cols-4 gap-2 mb-6 text-center">
-              <div className="p-3 rounded-xl bg-[#101323] border border-[#202641]">
+              <div className="p-3 rounded-xl bg-[#070811] border border-[#35b77a]/30">
                 <div className="text-xl font-bold text-[#35b77a]">{gradeACount}</div>
                 <div className="text-[10px] uppercase font-bold text-[#737b91] mt-1">Grade A</div>
               </div>
-              <div className="p-3 rounded-xl bg-[#101323] border border-[#202641]">
+              <div className="p-3 rounded-xl bg-[#070811] border border-[#5965d8]/30">
                 <div className="text-xl font-bold text-[#5965d8]">{gradeBCount}</div>
                 <div className="text-[10px] uppercase font-bold text-[#737b91] mt-1">Grade B</div>
               </div>
-              <div className="p-3 rounded-xl bg-[#101323] border border-[#202641]">
+              <div className="p-3 rounded-xl bg-[#070811] border border-[#9b8afb]/30">
                 <div className="text-xl font-bold text-[#9b8afb]">{gradeCCount}</div>
                 <div className="text-[10px] uppercase font-bold text-[#737b91] mt-1">Grade C</div>
               </div>
-              <div className="p-3 rounded-xl bg-[#101323] border border-[#202641]">
+              <div className="p-3 rounded-xl bg-[#070811] border border-[#d05a72]/30">
                 <div className="text-xl font-bold text-[#d05a72]">{gradeDCount}</div>
                 <div className="text-[10px] uppercase font-bold text-[#737b91] mt-1">Grade D</div>
               </div>
             </div>
           </div>
 
-          <div className="p-3.5 rounded-xl bg-[#070811] border border-[#202641] text-xs text-[#a7adc0] flex items-center justify-between">
+          <div className="p-3.5 rounded-xl bg-[#070811] border border-[#7c5cfc]/40 text-xs text-[#f5f5f7] flex items-center justify-between shadow-[inset_0_0_12px_rgba(124,92,252,0.1)]">
             <span className="flex items-center gap-2">
-              <Flame className="w-4 h-4 text-[#7c5cfc]" /> High-Intent Conversations
+              <Sparkles className="w-4 h-4 text-[#a855f7]" /> AI High-Intent Threads
             </span>
-            <span className="font-bold font-mono text-[#9b8afb]">{gradeACount + gradeBCount} Threads</span>
+            <span className="font-bold font-mono text-[#9b8afb] text-sm">{gradeACount + gradeBCount} Qualified</span>
           </div>
         </div>
 
