@@ -1,11 +1,11 @@
-import { UserProfile, RealtorContact, Conversation, PropertyDeal, AppNotification, AuditLogItem, ActivityEvent } from '../types/crm';
+import type { UserProfile, RealtorContact, Conversation, PropertyDeal, AppNotification, AuditLogItem } from '../types/crm';
 
 export const MOCK_USERS: UserProfile[] = [
-  { id: 'usr-1', name: 'Alexander Vance', email: 'alex.vance@apexacquire.com', role: 'ADMIN', avatar: 'AV', title: 'Managing Director & Partner' },
-  { id: 'usr-2', name: 'Elena Rostova', email: 'elena.r@apexacquire.com', role: 'MANAGER', avatar: 'ER', title: 'Head of Acquisitions' },
-  { id: 'usr-3', name: 'Marcus Sterling', email: 'marcus.s@apexacquire.com', role: 'AGENT', avatar: 'MS', title: 'Senior Acquisition Specialist' },
-  { id: 'usr-4', name: 'Sophia Chen', email: 'sophia.c@apexacquire.com', role: 'AGENT', avatar: 'SC', title: 'Acquisition Associate' },
-  { id: 'usr-5', name: 'David Miller', email: 'david.m@apexacquire.com', role: 'READ_ONLY', avatar: 'DM', title: 'Investment Analyst' },
+  { id: 'usr-1', name: 'Alexander Vance', email: 'alex.vance@apexacquire.com', role: 'ADMIN', avatar: 'AV', title: 'Managing Director & Partner', status: 'Active' },
+  { id: 'usr-2', name: 'Elena Rostova', email: 'elena.r@apexacquire.com', role: 'MANAGER', avatar: 'ER', title: 'Head of Acquisitions', status: 'Active' },
+  { id: 'usr-3', name: 'Marcus Sterling', email: 'marcus.s@apexacquire.com', role: 'AGENT', avatar: 'MS', title: 'Senior Acquisition Specialist', status: 'Active' },
+  { id: 'usr-4', name: 'Sophia Chen', email: 'sophia.c@apexacquire.com', role: 'AGENT', avatar: 'SC', title: 'Acquisition Associate', status: 'Active' },
+  { id: 'usr-5', name: 'David Miller', email: 'david.m@apexacquire.com', role: 'READ_ONLY', avatar: 'DM', title: 'Investment Analyst', status: 'Active' },
 ];
 
 export const INITIAL_CONTACTS: RealtorContact[] = [
@@ -20,12 +20,12 @@ export const INITIAL_CONTACTS: RealtorContact[] = [
     status: 'Engaged',
     ownerId: 'usr-3',
     ownerName: 'Marcus Sterling',
-    tags: ['High Volume', 'Luxury Specialist', 'DFW North'],
+    tags: ['High Volume', 'Luxury Specialist'],
     lastContacted: '10 mins ago',
     lastResponse: '5 mins ago',
     grade: 'A',
     score: 94,
-    notesCount: 4
+    notes: ['Motivated seller for fast 14-day cash settlement.']
   },
   {
     id: 'cnt-102',
@@ -38,12 +38,12 @@ export const INITIAL_CONTACTS: RealtorContact[] = [
     status: 'Engaged',
     ownerId: 'usr-4',
     ownerName: 'Sophia Chen',
-    tags: ['Fixer Upper', 'Off Market Focus'],
+    tags: ['Fixer Upper'],
     lastContacted: '1 hour ago',
     lastResponse: '42 mins ago',
     grade: 'A',
     score: 88,
-    notesCount: 2
+    notes: ['Awaiting final seller confirmation before Monday listing.']
   },
   {
     id: 'cnt-103',
@@ -56,12 +56,12 @@ export const INITIAL_CONTACTS: RealtorContact[] = [
     status: 'Enrolled',
     ownerId: 'usr-3',
     ownerName: 'Marcus Sterling',
-    tags: ['Suburbs', 'New Agent'],
+    tags: ['Suburbs'],
     lastContacted: '2 hours ago',
     lastResponse: '1 hour ago',
     grade: 'B',
     score: 76,
-    notesCount: 1
+    notes: []
   },
   {
     id: 'cnt-104',
@@ -74,12 +74,12 @@ export const INITIAL_CONTACTS: RealtorContact[] = [
     status: 'Engaged',
     ownerId: 'usr-2',
     ownerName: 'Elena Rostova',
-    tags: ['Distressed Properties', 'REO Specialist'],
+    tags: ['REO Specialist'],
     lastContacted: '3 hours ago',
     lastResponse: '2 hours ago',
     grade: 'A',
     score: 91,
-    notesCount: 5
+    notes: ['3209 Oakridge Dr, Arlington TX available under market.']
   },
   {
     id: 'cnt-105',
@@ -97,61 +97,7 @@ export const INITIAL_CONTACTS: RealtorContact[] = [
     lastResponse: '1 day ago',
     grade: 'D',
     score: 22,
-    notesCount: 0
-  },
-  {
-    id: 'cnt-106',
-    name: 'David O\'Connor',
-    licenseNumber: 'TREC #0482910',
-    brokerage: 'Briggs Freeman Sotheby\'s',
-    email: 'doconnor@briggsfreeman.com',
-    phone: '(214) 309-8811',
-    market: 'Dallas Metro - Preston Hollow',
-    status: 'Converted',
-    ownerId: 'usr-3',
-    ownerName: 'Marcus Sterling',
-    tags: ['High Value', 'Repeat Partner'],
-    lastContacted: '2 days ago',
-    lastResponse: '2 days ago',
-    grade: 'A',
-    score: 98,
-    notesCount: 8
-  },
-  {
-    id: 'cnt-107',
-    name: 'Elena Ramos',
-    licenseNumber: 'TREC #0771203',
-    brokerage: 'Monument Realty',
-    email: 'eramos@monumentrealty.com',
-    phone: '(469) 441-2099',
-    market: 'McKinney / Allen',
-    status: 'Enrolled',
-    ownerId: 'usr-4',
-    ownerName: 'Sophia Chen',
-    tags: ['Growth Market'],
-    lastContacted: '3 days ago',
-    lastResponse: 'None',
-    grade: 'C',
-    score: 55,
-    notesCount: 1
-  },
-  {
-    id: 'cnt-108',
-    name: 'Gregory Paul',
-    licenseNumber: 'TREC #0664912',
-    brokerage: 'Exp Realty DFW',
-    email: 'greg.paul@exprealty.com',
-    phone: '(817) 672-0044',
-    market: 'Fort Worth Downtown',
-    status: 'Engaged',
-    ownerId: 'usr-3',
-    ownerName: 'Marcus Sterling',
-    tags: ['Commercial/Residential'],
-    lastContacted: '4 hours ago',
-    lastResponse: '3 hours ago',
-    grade: 'B',
-    score: 79,
-    notesCount: 3
+    notes: []
   }
 ];
 
@@ -167,15 +113,15 @@ export const INITIAL_CONVERSATIONS: Conversation[] = [
     timestamp: '5 mins ago',
     grade: 'A',
     score: 94,
-    gradeReason: 'Clear address captured (4812 Bordeaux Ave), asking price provided ($1,450,000), quick 14-day closing timeline, high seller intent.',
+    gradeReason: 'Captured property address (4812 Bordeaux Ave), asking price ($1.45M), and fast closing timeline.',
     status: 'Leads With Address',
     aiStatus: 'Active',
     unread: true,
     classification: 'Has Property',
     messages: [
-      { id: 'm1', sender: 'ai', text: 'Hi Sarah, Marcus here with Apex Capital. We are looking for off-market residential deals in Highland Park. Have any pocket listings coming up?', timestamp: '10:15 AM', channel: 'sms' },
-      { id: 'm2', sender: 'realtor', text: 'Hey Marcus! Actually yes, I have an estate property that hasn’t hit MLS yet. Client wants a quick cash sale.', timestamp: '10:18 AM', channel: 'sms' },
-      { id: 'm3', sender: 'ai', text: 'That sounds right in our buy box! What is the exact address and asking price?', timestamp: '10:19 AM', channel: 'sms' },
+      { id: 'm1', sender: 'ai', text: 'Hi Sarah, Marcus here with Apex Capital. Looking for off-market deals in Highland Park.', timestamp: '10:15 AM', channel: 'sms' },
+      { id: 'm2', sender: 'realtor', text: 'Hey Marcus! I have an estate property before MLS listing.', timestamp: '10:18 AM', channel: 'sms' },
+      { id: 'm3', sender: 'ai', text: 'Great! What is the address and asking price?', timestamp: '10:19 AM', channel: 'sms' },
       { id: 'm4', sender: 'realtor', text: 'Yes, 4812 Bordeaux Ave in Highland Park! Asking $1,450,000, roof needs work. Can close in 14 days.', timestamp: '10:22 AM', channel: 'sms' }
     ],
     propertyCaptured: {
@@ -187,9 +133,9 @@ export const INITIAL_CONVERSATIONS: Conversation[] = [
       beds: 4,
       baths: 3.5,
       sqft: 3820,
-      condition: 'Needs roof replacement & cosmetic updating',
+      condition: 'Cosmetic & roof update required',
       timeline: '14 Days Cash Close',
-      intent: 'High - Probate Estate Settlement'
+      intent: 'Probate Estate Settlement'
     }
   },
   {
@@ -209,65 +155,10 @@ export const INITIAL_CONVERSATIONS: Conversation[] = [
     unread: false,
     classification: 'Interested',
     messages: [
-      { id: 'm10', sender: 'ai', text: 'Hello Robert, do you have any distressed single-family inventory in Tarrant County?', timestamp: '09:00 AM', channel: 'sms' },
-      { id: 'm11', sender: 'realtor', text: 'I might have a 3/2 near Arlington. But the owner is hesitant about investor lowballs.', timestamp: '09:30 AM', channel: 'sms' },
-      { id: 'm12', sender: 'human', text: 'Hi Robert, Marcus from Apex here taking over. We pay fair market cash with 0% commission fees to seller. What address can we underwrite?', timestamp: '09:40 AM', channel: 'sms' },
+      { id: 'm10', sender: 'ai', text: 'Hello Robert, do you have single-family inventory in Tarrant County?', timestamp: '09:00 AM', channel: 'sms' },
+      { id: 'm11', sender: 'realtor', text: 'I might have a 3/2 near Arlington. Owner hesitant about investor lowballs.', timestamp: '09:30 AM', channel: 'sms' },
+      { id: 'm12', sender: 'human', text: 'Hi Robert, Marcus from Apex taking over. We pay fair market cash with zero seller commission fees.', timestamp: '09:40 AM', channel: 'sms' },
       { id: 'm13', sender: 'realtor', text: 'I need to check with the seller if they want to entertain cash offers before listing on Monday.', timestamp: '09:45 AM', channel: 'sms' }
-    ]
-  },
-  {
-    id: 'conv-3',
-    contactId: 'cnt-104',
-    realtorName: 'Michael Chang',
-    realtorPhone: '(469) 782-9901',
-    realtorEmail: 'mchang@remax.net',
-    brokerage: 'RE/MAX Premier DFW',
-    latestMessage: '3209 Oakridge Dr, Arlington TX 76013. 3 beds 2 baths, asking $285k OBO.',
-    timestamp: '2 hours ago',
-    grade: 'A',
-    score: 91,
-    gradeReason: 'Specific address and competitive asking price captured ($285,000).',
-    status: 'Leads With Address',
-    aiStatus: 'Active',
-    unread: false,
-    classification: 'Has Property',
-    messages: [
-      { id: 'm20', sender: 'ai', text: 'Hi Michael, looking for fix & flip properties in Arlington under $350k.', timestamp: '08:00 AM', channel: 'sms' },
-      { id: 'm21', sender: 'realtor', text: 'Got one! 3209 Oakridge Dr, Arlington TX 76013. 3 beds 2 baths, asking $285k OBO.', timestamp: '08:15 AM', channel: 'sms' }
-    ],
-    propertyCaptured: {
-      address: '3209 Oakridge Dr',
-      city: 'Arlington',
-      state: 'TX',
-      zip: '76013',
-      askingPrice: 285000,
-      beds: 3,
-      baths: 2,
-      sqft: 1950,
-      condition: 'Full rehab required',
-      timeline: 'Immediate',
-      intent: 'Highly Motivated Seller'
-    }
-  },
-  {
-    id: 'conv-4',
-    contactId: 'cnt-108',
-    realtorName: 'Gregory Paul',
-    realtorPhone: '(817) 672-0044',
-    realtorEmail: 'greg.paul@exprealty.com',
-    brokerage: 'Exp Realty DFW',
-    latestMessage: 'Can someone call me today around 3 PM? I have 2 pocket deals in Fort Worth.',
-    timestamp: '3 hours ago',
-    grade: 'B',
-    score: 79,
-    gradeReason: 'Realtor requested explicit phone consultation regarding 2 pocket deals.',
-    status: 'Wants Call',
-    aiStatus: 'Human Takeover',
-    unread: true,
-    classification: 'Wants Call',
-    messages: [
-      { id: 'm30', sender: 'ai', text: 'Hi Gregory, any off-market inventory in Fort Worth urban core?', timestamp: '07:30 AM', channel: 'sms' },
-      { id: 'm31', sender: 'realtor', text: 'Can someone call me today around 3 PM? I have 2 pocket deals in Fort Worth.', timestamp: '08:05 AM', channel: 'sms' }
     ]
   }
 ];
@@ -299,7 +190,7 @@ export const INITIAL_DEALS: PropertyDeal[] = [
     realtorEmail: 'sarah.jenkins@compass.com',
     createdAt: 'Today, 10:22 AM',
     updatedAt: '10 mins ago',
-    source: 'SMS Outreach - Cadence A',
+    source: 'AI Outreach Capture',
     offerDetails: {
       purchasePrice: 1380000,
       earnestMoney: 25000,
@@ -311,88 +202,7 @@ export const INITIAL_DEALS: PropertyDeal[] = [
       titleCompany: 'Republic Title - Turtle Creek',
       financingType: 'Cash',
       inspectionPeriodDays: 5,
-      specialProvisions: 'Buyer acquires property in AS-IS condition. Seller removes all personal property prior to closing.'
-    }
-  },
-  {
-    id: 'dl-2',
-    conversationId: 'conv-3',
-    contactId: 'cnt-104',
-    address: '3209 Oakridge Dr',
-    city: 'Arlington',
-    state: 'TX',
-    zip: '76013',
-    askingPrice: 285000,
-    beds: 3,
-    baths: 2,
-    sqft: 1950,
-    yearBuilt: 1984,
-    propertyType: 'Single Family Residence',
-    stage: 'Offer Made',
-    isAiInbound: true,
-    ownerId: 'usr-2',
-    ownerName: 'Elena Rostova',
-    grade: 'A',
-    score: 91,
-    realtorName: 'Michael Chang',
-    realtorBrokerage: 'RE/MAX Premier DFW',
-    realtorPhone: '(469) 782-9901',
-    realtorEmail: 'mchang@remax.net',
-    createdAt: 'Yesterday',
-    updatedAt: '1 hour ago',
-    source: 'SMS Outreach - Cadence B',
-    offerDetails: {
-      purchasePrice: 265000,
-      earnestMoney: 5000,
-      optionFee: 500,
-      optionPeriodDays: 7,
-      closingDate: '2026-09-20',
-      buyerEntity: 'Apex Acquisitions DFW LLC',
-      sellerName: 'Michael Chang (Agent/Power of Attorney)',
-      titleCompany: 'Alamo Title Fort Worth',
-      financingType: 'Cash',
-      inspectionPeriodDays: 7,
-      specialProvisions: 'Subject to clean title search.'
-    }
-  },
-  {
-    id: 'dl-3',
-    contactId: 'cnt-106',
-    address: '5910 Preston Rd #402',
-    city: 'Dallas',
-    state: 'TX',
-    zip: '75205',
-    askingPrice: 920000,
-    beds: 2,
-    baths: 2.5,
-    sqft: 2200,
-    yearBuilt: 2012,
-    propertyType: 'Luxury Condominium',
-    stage: 'Offer Accepted',
-    isAiInbound: false,
-    ownerId: 'usr-3',
-    ownerName: 'Marcus Sterling',
-    grade: 'A',
-    score: 98,
-    realtorName: 'David O\'Connor',
-    realtorBrokerage: 'Briggs Freeman Sotheby\'s',
-    realtorPhone: '(214) 309-8811',
-    realtorEmail: 'doconnor@briggsfreeman.com',
-    createdAt: '3 days ago',
-    updatedAt: 'Yesterday',
-    source: 'Direct Realtor Relationship',
-    offerDetails: {
-      purchasePrice: 895000,
-      earnestMoney: 15000,
-      optionFee: 1000,
-      optionPeriodDays: 3,
-      closingDate: '2026-09-18',
-      buyerEntity: 'Apex Prime Properties LLC',
-      sellerName: 'Preston Heights Trust',
-      titleCompany: 'Fidelity National Title',
-      financingType: 'Private Money / Cash',
-      inspectionPeriodDays: 3,
-      specialProvisions: 'Includes 2 assigned underground parking spaces.'
+      specialProvisions: 'AS-IS cash acquisition with 5-day inspection period.'
     }
   }
 ];
@@ -400,7 +210,7 @@ export const INITIAL_DEALS: PropertyDeal[] = [
 export const INITIAL_NOTIFICATIONS: AppNotification[] = [
   {
     id: 'nt-1',
-    title: 'High Grade Opportunity Detected',
+    title: 'High-Grade Address Discovered',
     message: 'Sarah Jenkins provided property address 4812 Bordeaux Ave (Grade A - 94/100).',
     type: 'address_captured',
     timestamp: '5 mins ago',
@@ -409,27 +219,16 @@ export const INITIAL_NOTIFICATIONS: AppNotification[] = [
   },
   {
     id: 'nt-2',
-    title: 'Human Takeover Requested',
-    message: 'Robert Vance conversation requires human intervention regarding price negotiation.',
+    title: 'Human Takeover Escalation',
+    message: 'Robert Vance conversation requires human takeover regarding price negotiation.',
     type: 'conversation_escalated',
     timestamp: '42 mins ago',
     read: false,
     targetPath: 'conversations'
-  },
-  {
-    id: 'nt-3',
-    title: 'New Inbound Deal Created',
-    message: 'Deal for 3209 Oakridge Dr, Arlington moved to Offer Made stage.',
-    type: 'lead_assigned',
-    timestamp: '2 hours ago',
-    read: true,
-    targetPath: 'deals'
   }
 ];
 
 export const INITIAL_AUDIT_LOGS: AuditLogItem[] = [
-  { id: 'aud-1', actor: 'Alexander Vance (Admin)', action: 'Updated Global AI Instructions & Cap', timestamp: 'Today, 09:30 AM', affectedRecord: 'Settings / AI Engine' },
-  { id: 'aud-2', actor: 'Elena Rostova (Manager)', action: 'Reassigned 12 contacts from Unassigned to Marcus Sterling', timestamp: 'Today, 08:15 AM', affectedRecord: 'Contacts Batch #41' },
-  { id: 'aud-3', actor: 'Marcus Sterling (Agent)', action: 'Generated Purchase Contract v1 for 4812 Bordeaux Ave', timestamp: 'Yesterday, 04:20 PM', affectedRecord: 'Deal #dl-1' },
-  { id: 'aud-4', actor: 'System AI Worker', action: 'Captured property address & initialized Deal dl-2', timestamp: 'Yesterday, 02:10 PM', affectedRecord: 'Conversation conv-3' }
+  { id: 'aud-1', actor: 'Alexander Vance (Admin)', action: 'Updated Global AI Persona & Instructions', timestamp: 'Today, 09:30 AM', affectedRecord: 'Settings / AI Engine' },
+  { id: 'aud-2', actor: 'Elena Rostova (Manager)', action: 'Reassigned 12 contacts to Marcus Sterling', timestamp: 'Today, 08:15 AM', affectedRecord: 'Contacts Batch #41' }
 ];

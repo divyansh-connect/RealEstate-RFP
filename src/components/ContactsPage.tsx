@@ -1,23 +1,19 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { RealtorContact, ContactStatus, Grade } from '../types/crm';
+import type { RealtorContact, ContactStatus, Grade } from '../types/crm';
 import {
   Users,
   Upload,
   Search,
   Filter,
   Plus,
-  Tag,
-  UserCheck,
-  Ban,
+  Trash2,
+  Edit2,
   FileSpreadsheet,
   X,
-  CheckCircle,
   AlertTriangle,
-  ChevronRight,
   Phone,
-  Mail,
-  MoreHorizontal
+  Mail
 } from 'lucide-react';
 
 interface ContactsProps {
@@ -25,7 +21,7 @@ interface ContactsProps {
 }
 
 export const ContactsPage: React.FC<ContactsProps> = ({ onSelectContact }) => {
-  const { contacts, addContact, bulkUpdateContacts, importContacts, currentUser } = useApp();
+  const { contacts, addContact, updateContact, archiveContact, bulkUpdateContacts, importContacts, currentUser } = useApp();
   
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
@@ -34,11 +30,12 @@ export const ContactsPage: React.FC<ContactsProps> = ({ onSelectContact }) => {
   
   // Modals state
   const [showAddModal, setShowAddModal] = useState(false);
+  const [editingContact, setEditingContact] = useState<RealtorContact | null>(null);
+  const [archivingContactId, setArchivingContactId] = useState<string | null>(null);
   const [showCsvWizard, setShowCsvWizard] = useState(false);
   const [csvStep, setCsvStep] = useState<1 | 2 | 3>(1);
 
-  // New Contact Form State
-  const [newContact, setNewContact] = useState({
+  const [formData, setFormData] = useState({
     name: '',
     licenseNumber: '',
     brokerage: '',
@@ -48,13 +45,14 @@ export const ContactsPage: React.FC<ContactsProps> = ({ onSelectContact }) => {
     status: 'Enrolled' as ContactStatus,
     ownerId: currentUser.id,
     ownerName: currentUser.name,
-    tags: ['New Realtor'],
+    tags: ['Realtor Directory'],
     grade: 'B' as Grade,
     score: 75
   });
 
-  // Filtered contacts calculation
-  const filteredContacts = contacts.filter((c) => {
+  const activeContacts = contacts.filter(c => !c.isArchived);
+
+  const filteredContacts = activeContacts.filter((c) => {
     const matchesSearch = c.name.toLowerCase().includes(search.toLowerCase()) ||
       c.brokerage.toLowerCase().includes(search.toLowerCase()) ||
       c.email.toLowerCase().includes(search.toLowerCase()) ||
@@ -78,18 +76,26 @@ export const ContactsPage: React.FC<ContactsProps> = ({ onSelectContact }) => {
     setSelectedIds(prev => prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]);
   };
 
-  const handleCreateContact = (e: React.FormEvent) => {
+  const handleCreateOrUpdateContact = (e: React.FormEvent) => {
     e.preventDefault();
-    addContact({
-      ...newContact,
-      lastContacted: 'Just now',
-      lastResponse: 'None',
-      notesCount: 0
-    });
+    if (editingContact) {
+      updateContact(editingContact.id, formData);
+      setEditingContact(null);
+    } else {
+      addContact({
+        ...formData,
+        lastContacted: 'Just now',
+        lastResponse: 'None',
+        notes: []
+      });
+    }
     setShowAddModal(false);
   };
 
-  const isReadOnly = currentUser.role === 'READ_ONLY';
+  const isAdmin = currentUser.role === 'ADMIN';
+  const isManager = currentUser.role === 'MANAGER';
+  const canCreate = isAdmin || isManager;
+  const canBulk = isAdmin || isManager;
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
@@ -98,60 +104,75 @@ export const ContactsPage: React.FC<ContactsProps> = ({ onSelectContact }) => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-            Realtor Directory & CRM
-            <span className="px-2 py-0.5 rounded-full text-xs font-mono bg-amber-500/10 text-amber-400 border border-amber-500/20">
-              {contacts.length} Total
+            Realtor Directory
+            <span className="px-2 py-0.5 rounded-full text-xs font-mono bg-[#7c5cfc]/15 text-[#9b8afb] border border-[#7c5cfc]/30">
+              {activeContacts.length} Active
             </span>
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
-            Manage realtors across DFW markets, bulk enroll in email/SMS cadences, and review AI interaction grades.
+          <p className="text-xs text-[#a7adc0] mt-1">
+            Manage licensed realtors across DFW markets, campaign enrollment, and interaction grades.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          {!isReadOnly && (
-            <>
-              <button
-                onClick={() => { setShowCsvWizard(true); setCsvStep(1); }}
-                className="px-3.5 py-2 bg-slate-900 border border-slate-800 hover:border-amber-500/40 text-slate-200 text-xs font-semibold rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-sm"
-              >
-                <Upload className="w-4 h-4 text-amber-400" /> Upload CSV
-              </button>
-              <button
-                onClick={() => setShowAddModal(true)}
-                className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold rounded-xl shadow-lg shadow-amber-500/10 transition-all flex items-center gap-2 cursor-pointer"
-              >
-                <Plus className="w-4 h-4" /> Add Realtor Contact
-              </button>
-            </>
+          {isAdmin && (
+            <button
+              onClick={() => { setShowCsvWizard(true); setCsvStep(1); }}
+              className="px-3.5 py-2 bg-[#12162a] border border-[#202641] hover:border-[#7c5cfc]/40 text-[#f5f5f7] text-xs font-semibold rounded-xl transition-all flex items-center gap-2 cursor-pointer"
+            >
+              <Upload className="w-4 h-4 text-[#7c5cfc]" /> Upload CSV
+            </button>
+          )}
+
+          {canCreate && (
+            <button
+              onClick={() => {
+                setEditingContact(null);
+                setFormData({
+                  name: '',
+                  licenseNumber: '',
+                  brokerage: '',
+                  email: '',
+                  phone: '',
+                  market: 'Dallas Metro',
+                  status: 'Enrolled',
+                  ownerId: currentUser.id,
+                  ownerName: currentUser.name,
+                  tags: ['Realtor Directory'],
+                  grade: 'B',
+                  score: 75
+                });
+                setShowAddModal(true);
+              }}
+              className="px-4 py-2 bg-[#7c5cfc] hover:bg-[#6847e8] text-white text-xs font-bold rounded-xl shadow-lg shadow-[#7c5cfc]/20 transition-all flex items-center gap-2 cursor-pointer"
+            >
+              <Plus className="w-4 h-4" /> Add Realtor
+            </button>
           )}
         </div>
       </div>
 
       {/* FILTER & SEARCH TOOLBAR */}
-      <div className="luxury-card rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
-        
-        {/* Search Input */}
+      <div className="executive-panel rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="relative w-full md:w-80">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+          <Search className="w-4 h-4 text-[#737b91] absolute left-3.5 top-3" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search name, brokerage, email..."
-            className="w-full pl-10 pr-4 py-2 bg-slate-950/80 border border-slate-800 rounded-xl text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500/50"
+            className="w-full pl-10 pr-4 py-2 bg-[#070811] border border-[#202641] rounded-xl text-xs text-[#f5f5f7] placeholder-[#737b91] focus:outline-none focus:border-[#7c5cfc]"
           />
         </div>
 
-        {/* Dropdown Filters */}
-        <div className="flex items-center gap-3 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
-          <div className="flex items-center gap-1.5 text-xs text-slate-400">
+        <div className="flex items-center gap-3 w-full md:w-auto overflow-x-auto">
+          <div className="flex items-center gap-1.5 text-xs text-[#a7adc0]">
             <Filter className="w-3.5 h-3.5" /> Status:
           </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl px-3 py-2 focus:outline-none focus:border-amber-500"
+            className="bg-[#070811] border border-[#202641] text-[#f5f5f7] text-xs rounded-xl px-3 py-2 focus:outline-none focus:border-[#7c5cfc]"
           >
             <option value="ALL">All Statuses</option>
             <option value="New">New</option>
@@ -161,13 +182,11 @@ export const ContactsPage: React.FC<ContactsProps> = ({ onSelectContact }) => {
             <option value="DNC">DNC</option>
           </select>
 
-          <div className="flex items-center gap-1.5 text-xs text-slate-400 ml-2">
-            Grade:
-          </div>
+          <div className="flex items-center gap-1.5 text-xs text-[#a7adc0] ml-2">Grade:</div>
           <select
             value={gradeFilter}
             onChange={(e) => setGradeFilter(e.target.value)}
-            className="bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-xl px-3 py-2 focus:outline-none focus:border-amber-500"
+            className="bg-[#070811] border border-[#202641] text-[#f5f5f7] text-xs rounded-xl px-3 py-2 focus:outline-none focus:border-[#7c5cfc]"
           >
             <option value="ALL">All Grades</option>
             <option value="A">Grade A (90+)</option>
@@ -176,14 +195,12 @@ export const ContactsPage: React.FC<ContactsProps> = ({ onSelectContact }) => {
             <option value="D">Grade D (&lt;50)</option>
           </select>
         </div>
-
       </div>
 
-      {/* BULK SELECTION ACTION BAR */}
-      {selectedIds.length > 0 && !isReadOnly && (
-        <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-between animate-fadeIn">
-          <div className="text-xs text-amber-300 font-semibold flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+      {/* BULK ACTION BAR */}
+      {selectedIds.length > 0 && canBulk && (
+        <div className="p-3 rounded-xl bg-[#7c5cfc]/15 border border-[#7c5cfc]/30 flex items-center justify-between">
+          <div className="text-xs text-[#9b8afb] font-bold">
             {selectedIds.length} Realtors Selected
           </div>
           <div className="flex items-center gap-2">
@@ -192,7 +209,7 @@ export const ContactsPage: React.FC<ContactsProps> = ({ onSelectContact }) => {
                 bulkUpdateContacts(selectedIds, { status: 'Enrolled' });
                 setSelectedIds([]);
               }}
-              className="px-3 py-1.5 rounded-lg bg-amber-500 text-slate-950 text-xs font-bold hover:bg-amber-400 transition-colors"
+              className="px-3 py-1.5 rounded-lg bg-[#7c5cfc] text-white text-xs font-bold hover:bg-[#6847e8]"
             >
               Enroll in Cadence
             </button>
@@ -201,7 +218,7 @@ export const ContactsPage: React.FC<ContactsProps> = ({ onSelectContact }) => {
                 bulkUpdateContacts(selectedIds, { status: 'Opted Out' });
                 setSelectedIds([]);
               }}
-              className="px-3 py-1.5 rounded-lg bg-slate-800 text-rose-300 hover:bg-rose-500/20 text-xs font-semibold transition-colors"
+              className="px-3 py-1.5 rounded-lg bg-[#101323] text-[#d05a72] hover:bg-[#d05a72]/20 text-xs font-semibold"
             >
               Set Do Not Contact
             </button>
@@ -210,101 +227,126 @@ export const ContactsPage: React.FC<ContactsProps> = ({ onSelectContact }) => {
       )}
 
       {/* REALTOR CONTACTS TABLE */}
-      <div className="luxury-card rounded-2xl overflow-hidden shadow-xl">
+      <div className="executive-panel rounded-2xl overflow-hidden shadow-xl">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-slate-800 text-slate-400 uppercase tracking-wider text-[10px] bg-slate-950/60">
-                <th className="py-3 px-4 w-10">
-                  <input
-                    type="checkbox"
-                    checked={selectedIds.length === filteredContacts.length && filteredContacts.length > 0}
-                    onChange={handleSelectAll}
-                    disabled={isReadOnly}
-                    className="rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-amber-500"
-                  />
-                </th>
+              <tr className="border-b border-[#202641] text-[#737b91] uppercase tracking-wider text-[10px] bg-[#070811]">
+                {canBulk && (
+                  <th className="py-3 px-4 w-10">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.length === filteredContacts.length && filteredContacts.length > 0}
+                      onChange={handleSelectAll}
+                    />
+                  </th>
+                )}
                 <th className="py-3 px-4">Realtor Name & Brokerage</th>
                 <th className="py-3 px-4">Contact Info</th>
                 <th className="py-3 px-4">Market Region</th>
                 <th className="py-3 px-4">Status</th>
                 <th className="py-3 px-4">Grade</th>
                 <th className="py-3 px-4">Owner</th>
-                <th className="py-3 px-4 text-right">Action</th>
+                <th className="py-3 px-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 text-slate-200">
+            <tbody className="divide-y divide-[#202641] text-[#f5f5f7]">
               {filteredContacts.map((c) => (
-                <tr
-                  key={c.id}
-                  className="hover:bg-slate-900/40 transition-colors group cursor-pointer"
-                >
-                  <td className="py-3.5 px-4" onClick={(e) => e.stopPropagation()}>
-                    <input
-                      type="checkbox"
-                      checked={selectedIds.includes(c.id)}
-                      onChange={() => handleToggleSelect(c.id)}
-                      disabled={isReadOnly}
-                      className="rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-amber-500"
-                    />
-                  </td>
+                <tr key={c.id} className="hover:bg-[#171c33]/40 transition-colors group">
+                  {canBulk && (
+                    <td className="py-3.5 px-4">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.includes(c.id)}
+                        onChange={() => handleToggleSelect(c.id)}
+                      />
+                    </td>
+                  )}
                   
-                  <td className="py-3.5 px-4" onClick={() => onSelectContact(c)}>
-                    <div className="font-bold text-white group-hover:text-amber-400 transition-colors flex items-center gap-2">
+                  <td className="py-3.5 px-4 cursor-pointer" onClick={() => onSelectContact(c)}>
+                    <div className="font-bold text-white group-hover:text-[#9b8afb] transition-colors">
                       {c.name}
                     </div>
-                    <div className="text-[11px] text-slate-400">{c.brokerage} &bull; <span className="font-mono text-[10px]">{c.licenseNumber}</span></div>
+                    <div className="text-[11px] text-[#a7adc0]">{c.brokerage} &bull; <span className="font-mono text-[10px]">{c.licenseNumber}</span></div>
                   </td>
 
-                  <td className="py-3.5 px-4" onClick={() => onSelectContact(c)}>
-                    <div className="text-slate-300 flex items-center gap-1.5">
-                      <Mail className="w-3 h-3 text-slate-500" /> {c.email}
+                  <td className="py-3.5 px-4 cursor-pointer" onClick={() => onSelectContact(c)}>
+                    <div className="text-[#a7adc0] flex items-center gap-1.5">
+                      <Mail className="w-3 h-3 text-[#737b91]" /> {c.email}
                     </div>
-                    <div className="text-slate-400 text-[11px] flex items-center gap-1.5 mt-0.5">
-                      <Phone className="w-3 h-3 text-slate-500" /> {c.phone}
+                    <div className="text-[#737b91] text-[11px] flex items-center gap-1.5 mt-0.5">
+                      <Phone className="w-3 h-3 text-[#737b91]" /> {c.phone}
                     </div>
                   </td>
 
-                  <td className="py-3.5 px-4 text-slate-300" onClick={() => onSelectContact(c)}>
-                    {c.market}
-                  </td>
+                  <td className="py-3.5 px-4 text-[#a7adc0]">{c.market}</td>
 
-                  <td className="py-3.5 px-4" onClick={() => onSelectContact(c)}>
-                    <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${
-                      c.status === 'Engaged' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' :
-                      c.status === 'Enrolled' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' :
-                      c.status === 'Opted Out' || c.status === 'DNC' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' :
-                      'bg-slate-800 text-slate-300'
-                    }`}>
+                  <td className="py-3.5 px-4">
+                    <span className="px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider bg-[#101323] text-[#9b8afb] border border-[#202641]">
                       {c.status}
                     </span>
                   </td>
 
-                  <td className="py-3.5 px-4" onClick={() => onSelectContact(c)}>
-                    <div className="flex items-center gap-2">
-                      <span className={`w-6 h-6 rounded-md font-bold text-xs flex items-center justify-center ${
-                        c.grade === 'A' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' :
-                        c.grade === 'B' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' :
-                        c.grade === 'C' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' :
-                        'bg-rose-500/20 text-rose-400 border border-rose-500/30'
+                  <td className="py-3.5 px-4">
+                    <div className="flex items-center gap-1.5">
+                      <span className={`w-6 h-6 rounded font-bold text-xs flex items-center justify-center border ${
+                        c.grade === 'A' ? 'bg-[#35b77a]/15 text-[#35b77a] border-[#35b77a]/30' :
+                        c.grade === 'B' ? 'bg-[#5965d8]/15 text-[#5965d8] border-[#5965d8]/30' :
+                        c.grade === 'C' ? 'bg-[#9b8afb]/15 text-[#9b8afb] border-[#9b8afb]/30' :
+                        'bg-[#d05a72]/15 text-[#d05a72] border-[#d05a72]/30'
                       }`}>
                         {c.grade}
                       </span>
-                      <span className="font-mono text-slate-400 text-[11px]">{c.score}/100</span>
+                      <span className="font-mono text-[#737b91] text-[11px]">{c.score}</span>
                     </div>
                   </td>
 
-                  <td className="py-3.5 px-4 text-slate-300" onClick={() => onSelectContact(c)}>
-                    {c.ownerName}
-                  </td>
+                  <td className="py-3.5 px-4 text-[#a7adc0]">{c.ownerName}</td>
 
-                  <td className="py-3.5 px-4 text-right">
+                  <td className="py-3.5 px-4 text-right space-x-1">
                     <button
                       onClick={() => onSelectContact(c)}
-                      className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 hover:border-amber-500/40 text-slate-200 text-[11px] font-semibold transition-all inline-flex items-center gap-1 cursor-pointer"
+                      className="px-2.5 py-1 rounded bg-[#101323] text-slate-200 text-[11px] font-semibold hover:bg-[#171c33]"
                     >
-                      Profile <ChevronRight className="w-3.5 h-3.5" />
+                      Profile
                     </button>
+
+                    {canCreate && (
+                      <button
+                        onClick={() => {
+                          setEditingContact(c);
+                          setFormData({
+                            name: c.name,
+                            licenseNumber: c.licenseNumber,
+                            brokerage: c.brokerage,
+                            email: c.email,
+                            phone: c.phone,
+                            market: c.market,
+                            status: c.status,
+                            ownerId: c.ownerId,
+                            ownerName: c.ownerName,
+                            tags: c.tags,
+                            grade: c.grade,
+                            score: c.score
+                          });
+                          setShowAddModal(true);
+                        }}
+                        className="p-1 rounded bg-[#101323] text-[#737b91] hover:text-white"
+                        title="Edit Contact"
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+
+                    {canCreate && (
+                      <button
+                        onClick={() => setArchivingContactId(c.id)}
+                        className="p-1 rounded bg-[#101323] text-[#d05a72] hover:bg-[#d05a72]/20"
+                        title="Archive Contact"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -313,98 +355,60 @@ export const ContactsPage: React.FC<ContactsProps> = ({ onSelectContact }) => {
         </div>
       </div>
 
-      {/* CSV IMPORT SIMULATION WIZARD MODAL */}
+      {/* CSV IMPORT MODAL */}
       {showCsvWizard && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <div className="luxury-card w-full max-w-xl rounded-2xl p-6 relative">
-            <button onClick={() => setShowCsvWizard(false)} className="absolute top-5 right-5 text-slate-400 hover:text-white">
+          <div className="executive-panel w-full max-w-xl rounded-2xl p-6 relative space-y-4">
+            <button onClick={() => setShowCsvWizard(false)} className="absolute top-5 right-5 text-[#737b91] hover:text-white">
               <X className="w-5 h-5" />
             </button>
 
-            <div className="flex items-center gap-3 mb-6">
-              <div className="p-3 rounded-xl bg-amber-500/20 border border-amber-500/30 text-amber-400">
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-xl bg-[#7c5cfc]/20 border border-[#7c5cfc]/30 text-[#7c5cfc]">
                 <FileSpreadsheet className="w-6 h-6" />
               </div>
               <div>
                 <h3 className="text-lg font-bold text-white">Import Realtor CSV List</h3>
-                <p className="text-xs text-slate-400">Phase 1 Visual Simulation • Automatic Field Mapping & Duplicate Detection</p>
+                <p className="text-xs text-[#a7adc0]">Column Mapping & Duplicate Verification</p>
               </div>
             </div>
 
-            {/* Step Indicators */}
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
-              <div className={`text-xs font-bold ${csvStep === 1 ? 'text-amber-400' : 'text-slate-400'}`}>1. Upload File</div>
-              <div className={`text-xs font-bold ${csvStep === 2 ? 'text-amber-400' : 'text-slate-400'}`}>2. Field Mapping</div>
-              <div className={`text-xs font-bold ${csvStep === 3 ? 'text-amber-400' : 'text-slate-400'}`}>3. Verification & Import</div>
-            </div>
-
-            {/* STEP 1: UPLOAD FILE */}
             {csvStep === 1 && (
-              <div className="space-y-4">
-                <div className="border-2 border-dashed border-slate-800 rounded-xl p-8 text-center hover:border-amber-500/40 transition-colors bg-slate-950/40 cursor-pointer">
-                  <Upload className="w-8 h-8 text-slate-500 mx-auto mb-2" />
-                  <p className="text-xs text-slate-300 font-semibold">Drag & Drop DFW Realtor CSV file here</p>
-                  <p className="text-[10px] text-slate-400 mt-1">Supports TREC License Lists, Brokerage Rosters (Max 50MB)</p>
+              <div className="space-y-4 pt-2">
+                <div className="border-2 border-dashed border-[#202641] rounded-xl p-8 text-center bg-[#070811] cursor-pointer">
+                  <Upload className="w-8 h-8 text-[#737b91] mx-auto mb-2" />
+                  <p className="text-xs text-slate-300 font-semibold">Upload DFW Realtor CSV file</p>
                 </div>
                 <button
                   onClick={() => setCsvStep(2)}
-                  className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl shadow-lg transition-all"
+                  className="w-full py-3 bg-[#7c5cfc] hover:bg-[#6847e8] text-white font-bold text-xs rounded-xl"
                 >
-                  Simulate Upload "dfw_realtors_q3_2026.csv"
+                  Simulate Upload "dfw_realtors_q3.csv"
                 </button>
               </div>
             )}
 
-            {/* STEP 2: FIELD MAPPING */}
             {csvStep === 2 && (
-              <div className="space-y-4">
-                <div className="space-y-2 text-xs">
-                  <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-950/60 border border-slate-800">
-                    <span className="text-slate-400">CSV Column: "First & Last Name"</span>
-                    <span className="text-amber-400 font-semibold">&rarr; Full Name</span>
-                  </div>
-                  <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-950/60 border border-slate-800">
-                    <span className="text-slate-400">CSV Column: "TREC_ID"</span>
-                    <span className="text-amber-400 font-semibold">&rarr; License Number</span>
-                  </div>
-                  <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-950/60 border border-slate-800">
-                    <span className="text-slate-400">CSV Column: "Brokerage Office"</span>
-                    <span className="text-amber-400 font-semibold">&rarr; Brokerage</span>
-                  </div>
-                  <div className="flex items-center justify-between p-2.5 rounded-lg bg-slate-950/60 border border-slate-800">
-                    <span className="text-slate-400">CSV Column: "Primary Email"</span>
-                    <span className="text-amber-400 font-semibold">&rarr; Email</span>
-                  </div>
+              <div className="space-y-3 text-xs pt-2">
+                <div className="flex justify-between p-2 bg-[#070811] rounded border border-[#202641]">
+                  <span className="text-[#a7adc0]">Column: Name</span>
+                  <strong className="text-[#9b8afb]">&rarr; Full Name</strong>
                 </div>
-
                 <button
                   onClick={() => setCsvStep(3)}
-                  className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl shadow-lg transition-all"
+                  className="w-full py-3 bg-[#7c5cfc] text-white font-bold text-xs rounded-xl"
                 >
-                  Confirm Column Mapping & Validate
+                  Confirm Mapping & Validate
                 </button>
               </div>
             )}
 
-            {/* STEP 3: DUPLICATE VERIFICATION & CONFIRM */}
             {csvStep === 3 && (
-              <div className="space-y-4">
-                <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-300 flex items-start gap-2">
-                  <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <span className="font-bold">Duplicate Match Warning:</span> 2 rows match existing email/phone records and will be merged automatically.
-                  </div>
+              <div className="space-y-3 text-xs pt-2">
+                <div className="p-3 rounded-xl bg-[#7c5cfc]/10 border border-[#7c5cfc]/30 text-[#9b8afb] flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+                  <span>2 duplicate records detected & merged automatically.</span>
                 </div>
-
-                <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 text-xs space-y-1">
-                  <div className="flex justify-between text-slate-300">
-                    <span>Valid New Realtor Records:</span>
-                    <strong className="text-emerald-400">48 Records</strong>
-                  </div>
-                  <div className="flex justify-between text-slate-300"><span>Duplicates Flagged:</span><strong className="text-amber-400">2 Records</strong></div>
-                  <div className="flex justify-between text-slate-300"><span>Target Market:</span><strong className="text-white">Dallas North & Tarrant</strong></div>
-                </div>
-
                 <button
                   onClick={() => {
                     importContacts([
@@ -418,19 +422,19 @@ export const ContactsPage: React.FC<ContactsProps> = ({ onSelectContact }) => {
                         status: 'Enrolled',
                         ownerId: currentUser.id,
                         ownerName: currentUser.name,
-                        tags: ['Imported CSV', 'Luxury'],
+                        tags: ['Imported CSV'],
                         lastContacted: 'Just now',
                         lastResponse: 'None',
                         grade: 'B',
                         score: 78,
-                        notesCount: 0
+                        notes: []
                       }
                     ]);
                     setShowCsvWizard(false);
                   }}
-                  className="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl shadow-lg transition-all"
+                  className="w-full py-3 bg-[#35b77a] text-slate-950 font-bold text-xs rounded-xl"
                 >
-                  Confirm & Import 48 Realtors To CRM
+                  Import 48 Valid Records To CRM
                 </button>
               </div>
             )}
@@ -439,85 +443,81 @@ export const ContactsPage: React.FC<ContactsProps> = ({ onSelectContact }) => {
         </div>
       )}
 
-      {/* MANUAL ADD CONTACT MODAL */}
+      {/* MANUAL ADD / EDIT CONTACT MODAL */}
       {showAddModal && (
         <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <div className="luxury-card w-full max-w-lg rounded-2xl p-6 relative">
-            <button onClick={() => setShowAddModal(false)} className="absolute top-5 right-5 text-slate-400 hover:text-white">
+          <div className="executive-panel w-full max-w-lg rounded-2xl p-6 relative space-y-4">
+            <button onClick={() => setShowAddModal(false)} className="absolute top-5 right-5 text-[#737b91] hover:text-white">
               <X className="w-5 h-5" />
             </button>
             
-            <h3 className="text-lg font-bold text-white mb-4">Add Realtor Contact</h3>
+            <h3 className="text-lg font-bold text-white">{editingContact ? 'Edit Realtor Record' : 'Add Realtor Contact'}</h3>
             
-            <form onSubmit={handleCreateContact} className="space-y-4 text-xs">
+            <form onSubmit={handleCreateOrUpdateContact} className="space-y-3 text-xs">
               <div>
-                <label className="block text-slate-300 font-semibold mb-1">Full Name</label>
+                <label className="block text-[#a7adc0] font-semibold mb-1">Full Name</label>
                 <input
                   type="text"
                   required
-                  value={newContact.name}
-                  onChange={(e) => setNewContact({ ...newContact, name: e.target.value })}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-amber-500"
-                  placeholder="e.g. Rachel Sterling"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  className="w-full px-3 py-2 bg-[#070811] border border-[#202641] rounded-xl text-white focus:outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">TREC License Number</label>
+                  <label className="block text-[#a7adc0] font-semibold mb-1">TREC License Number</label>
                   <input
                     type="text"
                     required
-                    value={newContact.licenseNumber}
-                    onChange={(e) => setNewContact({ ...newContact, licenseNumber: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-amber-500"
-                    placeholder="TREC #0928192"
+                    value={formData.licenseNumber}
+                    onChange={(e) => setFormData({ ...formData, licenseNumber: e.target.value })}
+                    className="w-full px-3 py-2 bg-[#070811] border border-[#202641] rounded-xl text-white focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Brokerage Office</label>
+                  <label className="block text-[#a7adc0] font-semibold mb-1">Brokerage Office</label>
                   <input
                     type="text"
                     required
-                    value={newContact.brokerage}
-                    onChange={(e) => setNewContact({ ...newContact, brokerage: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-amber-500"
-                    placeholder="Compass Real Estate"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Email Address</label>
-                  <input
-                    type="email"
-                    required
-                    value={newContact.email}
-                    onChange={(e) => setNewContact({ ...newContact, email: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-amber-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-300 font-semibold mb-1">Mobile Phone</label>
-                  <input
-                    type="text"
-                    required
-                    value={newContact.phone}
-                    onChange={(e) => setNewContact({ ...newContact, phone: e.target.value })}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-amber-500"
-                    placeholder="(214) 555-0199"
+                    value={formData.brokerage}
+                    onChange={(e) => setFormData({ ...formData, brokerage: e.target.value })}
+                    className="w-full px-3 py-2 bg-[#070811] border border-[#202641] rounded-xl text-white focus:outline-none"
                   />
                 </div>
               </div>
 
               <button
                 type="submit"
-                className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl mt-4"
+                className="w-full py-3 bg-[#7c5cfc] hover:bg-[#6847e8] text-white font-bold rounded-xl mt-3"
               >
-                Save Contact To CRM
+                {editingContact ? 'Save Changes' : 'Save Realtor To Directory'}
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* CONFIRM ARCHIVE MODAL */}
+      {archivingContactId && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="executive-panel w-full max-w-sm rounded-2xl p-6 relative space-y-4 text-center">
+            <AlertTriangle className="w-10 h-10 text-[#d05a72] mx-auto" />
+            <h3 className="text-base font-bold text-white">Archive Realtor Record?</h3>
+            <p className="text-xs text-[#a7adc0]">Soft-deletes record while preserving audit trail history.</p>
+            <div className="flex gap-2">
+              <button onClick={() => setArchivingContactId(null)} className="flex-1 py-2.5 bg-[#101323] text-slate-300 text-xs font-bold rounded-xl">Cancel</button>
+              <button
+                onClick={() => {
+                  archiveContact(archivingContactId);
+                  setArchivingContactId(null);
+                }}
+                className="flex-1 py-2.5 bg-[#d05a72] text-white text-xs font-bold rounded-xl"
+              >
+                Confirm Archive
+              </button>
+            </div>
           </div>
         </div>
       )}

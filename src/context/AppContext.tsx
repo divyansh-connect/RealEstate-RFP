@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { UserProfile, UserRole, RealtorContact, Conversation, PropertyDeal, AppNotification, AuditLogItem, Grade, DealStage } from '../types/crm';
+import React, { createContext, useContext, useState } from 'react';
+import type { UserProfile, UserRole, RealtorContact, Conversation, PropertyDeal, AppNotification, AuditLogItem, Grade, DealStage } from '../types/crm';
 import { MOCK_USERS, INITIAL_CONTACTS, INITIAL_CONVERSATIONS, INITIAL_DEALS, INITIAL_NOTIFICATIONS, INITIAL_AUDIT_LOGS } from '../data/mockData';
 
 interface AppContextType {
@@ -9,10 +9,17 @@ interface AppContextType {
   login: (email: string, role?: UserRole) => void;
   logout: () => void;
   
-  // Contacts State & Actions
+  // User Management
+  users: UserProfile[];
+  addUser: (user: Omit<UserProfile, 'id'>) => void;
+  updateUser: (id: string, updates: Partial<UserProfile>) => void;
+  toggleUserStatus: (id: string) => void;
+  
+  // Contacts State & Actions (CRUD + Soft Delete)
   contacts: RealtorContact[];
   addContact: (contact: Omit<RealtorContact, 'id'>) => void;
   updateContact: (id: string, updates: Partial<RealtorContact>) => void;
+  archiveContact: (id: string) => void;
   bulkUpdateContacts: (ids: string[], updates: Partial<RealtorContact>) => void;
   importContacts: (newContacts: Omit<RealtorContact, 'id'>[]) => void;
   
@@ -24,12 +31,14 @@ interface AppContextType {
   toggleAiTakeover: (conversationId: string, aiStatus: 'Active' | 'Human Takeover' | 'AI Off') => void;
   overrideGrade: (conversationId: string, newGrade: Grade, newScore: number, reason: string) => void;
   
-  // Deals State & Actions
+  // Deals State & Actions (CRUD)
   deals: PropertyDeal[];
   activeDealId: string | null;
   setActiveDealId: (id: string | null) => void;
+  addDeal: (deal: Omit<PropertyDeal, 'id' | 'createdAt' | 'updatedAt'>) => void;
   updateDealStage: (dealId: string, newStage: DealStage) => void;
   updateDeal: (dealId: string, updates: Partial<PropertyDeal>) => void;
+  archiveDeal: (dealId: string) => void;
   addGeneratedContract: (dealId: string, contract: { templateName: string; fileName: string; fileType: 'pdf' | 'docx'; generatedBy: string }) => void;
   claimLead: (conversationId: string) => void;
   
@@ -55,7 +64,7 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-
+  const [users, setUsers] = useState<UserProfile[]>(MOCK_USERS);
   const [currentUser, setCurrentUser] = useState<UserProfile>(MOCK_USERS[0]); // Admin default
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
   
@@ -73,14 +82,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     cadenceIntervalDays: 3,
     sendingHoursStart: '08:00',
     sendingHoursEnd: '18:00',
-    aiInstructions: 'Identify whether the realtor has an off-market or pocket property. Collect address, asking price, condition, and closing timeline. Keep messages professional, concise, and helpful.',
+    aiInstructions: 'Identify whether the realtor has an off-market property. Collect address, asking price, condition, and closing timeline. Keep messages professional, concise, and helpful.',
     aiMaxConsecutiveReplies: 4,
     globalAiEnabled: true,
     gradeWeights: { response: 25, address: 35, price: 20, timeline: 20 }
   });
 
   const setCurrentUserRole = (role: UserRole) => {
-    const userForRole = MOCK_USERS.find(u => u.role === role) || {
+    const userForRole = users.find(u => u.role === role) || {
       ...currentUser,
       role
     };
@@ -89,13 +98,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const login = (email: string, role: UserRole = 'ADMIN') => {
-    const match = MOCK_USERS.find(u => u.email.toLowerCase() === email.toLowerCase()) || {
+    const match = users.find(u => u.email.toLowerCase() === email.toLowerCase()) || {
       id: `usr-${Date.now()}`,
       name: email.split('@')[0].toUpperCase(),
       email,
       role,
       avatar: email.substring(0, 2).toUpperCase(),
-      title: 'Real Estate Executive'
+      title: 'Real Estate Executive',
+      status: 'Active' as const
     };
     setCurrentUser(match);
     setIsAuthenticated(true);
@@ -104,6 +114,28 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const logout = () => {
     setIsAuthenticated(false);
+  };
+
+  const addUser = (userData: Omit<UserProfile, 'id'>) => {
+    const newUser = { ...userData, id: `usr-${Date.now()}` };
+    setUsers(prev => [...prev, newUser]);
+    logAuditAction(`Added user ${newUser.name} (${newUser.role})`, `User #${newUser.id}`);
+  };
+
+  const updateUser = (id: string, updates: Partial<UserProfile>) => {
+    setUsers(prev => prev.map(u => u.id === id ? { ...u, ...updates } : u));
+    logAuditAction(`Updated user profile`, `User #${id}`);
+  };
+
+  const toggleUserStatus = (id: string) => {
+    setUsers(prev => prev.map(u => {
+      if (u.id === id) {
+        const nextStatus = u.status === 'Active' ? 'Deactivated' : 'Active';
+        return { ...u, status: nextStatus as 'Active' | 'Deactivated' };
+      }
+      return u;
+    }));
+    logAuditAction(`Toggled user activation status`, `User #${id}`);
   };
 
   const addContact = (contactData: Omit<RealtorContact, 'id'>) => {
@@ -116,6 +148,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const updateContact = (id: string, updates: Partial<RealtorContact>) => {
     setContacts(prev => prev.map(c => c.id === id ? { ...c, ...updates } : c));
     logAuditAction(`Updated contact details for ID ${id}`, `Contact #${id}`);
+  };
+
+  const archiveContact = (id: string) => {
+    setContacts(prev => prev.map(c => c.id === id ? { ...c, isArchived: true, status: 'Archived' } : c));
+    logAuditAction(`Soft-deleted (archived) contact`, `Contact #${id}`);
   };
 
   const bulkUpdateContacts = (ids: string[], updates: Partial<RealtorContact>) => {
@@ -144,49 +181,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           timestamp: 'Just now',
           channel: 'sms' as const
         };
-        const updatedMessages = [...conv.messages, newMsg];
         return {
           ...conv,
           latestMessage: text,
           timestamp: 'Just now',
-          messages: updatedMessages
-        };
-      }
-      return conv;
-    }));
-
-    // Auto simulate realtor reply if AI is active after 2.5s
-    const targetConv = conversations.find(c => c.id === conversationId);
-    if (targetConv && targetConv.aiStatus === 'Active') {
-      setTimeout(() => {
-        simulateRealtorReply(conversationId);
-      }, 2500);
-    }
-  };
-
-  const simulateRealtorReply = (conversationId: string) => {
-    const mockReplies = [
-      'Thanks for reaching out! I actually have a 4 bed 3 bath distressed listing in Frisco coming next week. Asking around $520k.',
-      'We are looking at $410,000 net to seller. Can your team close before end of month?',
-      'Can you send me your cash proof of funds before I disclose the seller details?'
-    ];
-    const randomText = mockReplies[Math.floor(Math.random() * mockReplies.length)];
-
-    setConversations(prev => prev.map(conv => {
-      if (conv.id === conversationId) {
-        const realtorMsg = {
-          id: `msg-r-${Date.now()}`,
-          sender: 'realtor' as const,
-          text: randomText,
-          timestamp: 'Just now',
-          channel: 'sms' as const
-        };
-        return {
-          ...conv,
-          latestMessage: randomText,
-          timestamp: 'Just now',
-          unread: true,
-          messages: [...conv.messages, realtorMsg]
+          messages: [...conv.messages, newMsg]
         };
       }
       return conv;
@@ -194,28 +193,29 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const toggleAiTakeover = (conversationId: string, aiStatus: 'Active' | 'Human Takeover' | 'AI Off') => {
-    setConversations(prev => prev.map(conv => {
-      if (conv.id === conversationId) {
-        return { ...conv, aiStatus };
-      }
-      return conv;
-    }));
+    setConversations(prev => prev.map(conv => conv.id === conversationId ? { ...conv, aiStatus } : conv));
     logAuditAction(`Changed AI status to ${aiStatus}`, `Conversation #${conversationId}`);
   };
 
   const overrideGrade = (conversationId: string, newGrade: Grade, newScore: number, reason: string) => {
-    setConversations(prev => prev.map(conv => {
-      if (conv.id === conversationId) {
-        return {
-          ...conv,
-          grade: newGrade,
-          score: newScore,
-          gradeReason: `[Manual Override by ${currentUser.name}]: ${reason}`
-        };
-      }
-      return conv;
-    }));
+    setConversations(prev => prev.map(conv => conv.id === conversationId ? {
+      ...conv,
+      grade: newGrade,
+      score: newScore,
+      gradeReason: `[Manual Override by ${currentUser.name}]: ${reason}`
+    } : conv));
     logAuditAction(`Manually overridden grade to ${newGrade} (${newScore})`, `Conversation #${conversationId}`);
+  };
+
+  const addDeal = (dealData: Omit<PropertyDeal, 'id' | 'createdAt' | 'updatedAt'>) => {
+    const newDeal: PropertyDeal = {
+      ...dealData,
+      id: `dl-${Date.now()}`,
+      createdAt: 'Just now',
+      updatedAt: 'Just now'
+    };
+    setDeals(prev => [newDeal, ...prev]);
+    logAuditAction(`Manually created deal for ${newDeal.address}`, `Deal #${newDeal.id}`);
   };
 
   const updateDealStage = (dealId: string, newStage: DealStage) => {
@@ -225,7 +225,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const updateDeal = (dealId: string, updates: Partial<PropertyDeal>) => {
     setDeals(prev => prev.map(d => d.id === dealId ? { ...d, ...updates, updatedAt: 'Just now' } : d));
-    logAuditAction(`Updated deal properties`, `Deal #${dealId}`);
+    logAuditAction(`Updated deal parameters`, `Deal #${dealId}`);
+  };
+
+  const archiveDeal = (dealId: string) => {
+    setDeals(prev => prev.map(d => d.id === dealId ? { ...d, isArchived: true, stage: 'Trash' } : d));
+    logAuditAction(`Soft-deleted (archived) deal`, `Deal #${dealId}`);
   };
 
   const addGeneratedContract = (dealId: string, contract: { templateName: string; fileName: string; fileType: 'pdf' | 'docx'; generatedBy: string }) => {
@@ -248,17 +253,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return d;
     }));
 
-    logAuditAction(`Generated contract version ${contractObj.version} (${contract.templateName})`, `Deal #${dealId}`);
+    logAuditAction(`Generated contract version ${contractObj.version}`, `Deal #${dealId}`);
   };
 
   const claimLead = (conversationId: string) => {
     const conv = conversations.find(c => c.id === conversationId);
     if (!conv) return;
 
-    // Update conversation state to human takeover
     toggleAiTakeover(conversationId, 'Human Takeover');
 
-    // Create deal if property captured and not exists
     if (conv.propertyCaptured && !deals.some(d => d.conversationId === conversationId)) {
       const newDeal: PropertyDeal = {
         id: `dl-${Date.now()}`,
@@ -320,9 +323,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       isAuthenticated,
       login,
       logout,
+      users,
+      addUser,
+      updateUser,
+      toggleUserStatus,
       contacts,
       addContact,
       updateContact,
+      archiveContact,
       bulkUpdateContacts,
       importContacts,
       conversations,
@@ -334,8 +342,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       deals,
       activeDealId,
       setActiveDealId,
+      addDeal,
       updateDealStage,
       updateDeal,
+      archiveDeal,
       addGeneratedContract,
       claimLead,
       notifications,

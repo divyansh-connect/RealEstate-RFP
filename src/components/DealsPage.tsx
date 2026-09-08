@@ -1,18 +1,13 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { PropertyDeal, DealStage, Grade } from '../types/crm';
+import type { PropertyDeal, DealStage } from '../types/crm';
 import {
   Kanban,
   List,
   Plus,
   Search,
-  Filter,
-  Building,
-  DollarSign,
-  User,
-  Clock,
-  ChevronRight,
-  Flame
+  Trash2,
+  X
 } from 'lucide-react';
 
 interface DealsProps {
@@ -31,21 +26,43 @@ const STAGES: DealStage[] = [
 ];
 
 export const DealsPage: React.FC<DealsProps> = ({ onSelectDeal }) => {
-  const { deals, updateDealStage, currentUser } = useApp();
+  const { deals, addDeal, updateDealStage, archiveDeal, currentUser } = useApp();
   
   const [pipelineTab, setPipelineTab] = useState<'DEALS' | 'AI_INBOUND'>('DEALS');
   const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban');
   const [search, setSearch] = useState('');
-  const [ownerFilter, setOwnerFilter] = useState('ALL');
+  
+  // Modals state
+  const [showAddDealModal, setShowAddDealModal] = useState(false);
+  const [archivingDealId, setArchivingDealId] = useState<string | null>(null);
 
-  const filteredDeals = deals.filter((d) => {
+  const [newDeal, setNewDeal] = useState({
+    address: '',
+    city: 'Dallas',
+    state: 'TX',
+    zip: '75205',
+    askingPrice: 500000,
+    beds: 3,
+    baths: 2,
+    sqft: 2000,
+    yearBuilt: 2000,
+    propertyType: 'Single Family Residence',
+    stage: 'New Property' as DealStage,
+    realtorName: '',
+    realtorBrokerage: '',
+    realtorPhone: '',
+    realtorEmail: ''
+  });
+
+  const activeDeals = deals.filter(d => !d.isArchived);
+
+  const filteredDeals = activeDeals.filter((d) => {
     const matchesPipeline = pipelineTab === 'AI_INBOUND' ? d.isAiInbound : true;
     const matchesSearch = d.address.toLowerCase().includes(search.toLowerCase()) ||
       d.realtorName.toLowerCase().includes(search.toLowerCase()) ||
       d.city.toLowerCase().includes(search.toLowerCase());
-    const matchesOwner = ownerFilter === 'ALL' || d.ownerId === ownerFilter;
 
-    return matchesPipeline && matchesSearch && matchesOwner;
+    return matchesPipeline && matchesSearch;
   });
 
   const handleDragStart = (e: React.DragEvent, dealId: string) => {
@@ -64,6 +81,21 @@ export const DealsPage: React.FC<DealsProps> = ({ onSelectDeal }) => {
     }
   };
 
+  const handleCreateDeal = (e: React.FormEvent) => {
+    e.preventDefault();
+    addDeal({
+      ...newDeal,
+      contactId: `cnt-${Date.now()}`,
+      isAiInbound: false,
+      ownerId: currentUser.id,
+      ownerName: currentUser.name,
+      grade: 'B',
+      score: 80,
+      source: 'Manual Acquisition Entry'
+    });
+    setShowAddDealModal(false);
+  };
+
   const isReadOnly = currentUser.role === 'READ_ONLY';
 
   return (
@@ -73,33 +105,42 @@ export const DealsPage: React.FC<DealsProps> = ({ onSelectDeal }) => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-            Acquisition Deals Workspace
-            <span className="px-2 py-0.5 rounded-full text-xs font-mono bg-amber-500/10 text-amber-400 border border-amber-500/20">
-              {filteredDeals.length} Deals
+            Deals Workspace
+            <span className="px-2 py-0.5 rounded-full text-xs font-mono bg-[#7c5cfc]/15 text-[#9b8afb] border border-[#7c5cfc]/30">
+              {filteredDeals.length} Active Deals
             </span>
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
-            Drag-and-drop Kanban pipeline, underwriting inspection, offer tracking, and contract wizard.
+          <p className="text-xs text-[#a7adc0] mt-1">
+            Drag-and-drop Kanban pipeline, underwriting analysis, offer tracking, and contract wizard.
           </p>
         </div>
 
         {/* View Mode & Pipeline Switcher */}
         <div className="flex items-center gap-3">
           
+          {!isReadOnly && (
+            <button
+              onClick={() => setShowAddDealModal(true)}
+              className="px-3.5 py-2 bg-[#7c5cfc] hover:bg-[#6847e8] text-white text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shadow-md shadow-[#7c5cfc]/20"
+            >
+              <Plus className="w-4 h-4" /> Create Deal
+            </button>
+          )}
+
           {/* Dual Pipeline Selector */}
-          <div className="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800">
+          <div className="flex items-center bg-[#070811] p-1 rounded-xl border border-[#202641]">
             <button
               onClick={() => setPipelineTab('DEALS')}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                pipelineTab === 'DEALS' ? 'bg-amber-500 text-slate-950 shadow-md' : 'text-slate-400 hover:text-white'
+                pipelineTab === 'DEALS' ? 'bg-[#7c5cfc] text-white shadow-md' : 'text-[#a7adc0] hover:text-white'
               }`}
             >
-              All Active Deals
+              All Deals
             </button>
             <button
               onClick={() => setPipelineTab('AI_INBOUND')}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                pipelineTab === 'AI_INBOUND' ? 'bg-purple-500 text-white shadow-md' : 'text-slate-400 hover:text-white'
+                pipelineTab === 'AI_INBOUND' ? 'bg-[#a855f7]/20 text-[#a855f7] border border-[#a855f7]/30' : 'text-[#a7adc0] hover:text-white'
               }`}
             >
               AI / Inbound Deals
@@ -107,18 +148,16 @@ export const DealsPage: React.FC<DealsProps> = ({ onSelectDeal }) => {
           </div>
 
           {/* Kanban vs List Switcher */}
-          <div className="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800">
+          <div className="flex items-center bg-[#070811] p-1 rounded-xl border border-[#202641]">
             <button
               onClick={() => setViewMode('kanban')}
-              className={`p-1.5 rounded-lg transition-colors ${viewMode === 'kanban' ? 'bg-slate-800 text-amber-400' : 'text-slate-400'}`}
-              title="Kanban Board View"
+              className={`p-1.5 rounded-lg transition-colors ${viewMode === 'kanban' ? 'bg-[#101323] text-[#7c5cfc]' : 'text-[#737b91]'}`}
             >
               <Kanban className="w-4 h-4" />
             </button>
             <button
               onClick={() => setViewMode('list')}
-              className={`p-1.5 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-slate-800 text-amber-400' : 'text-slate-400'}`}
-              title="List View"
+              className={`p-1.5 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-[#101323] text-[#7c5cfc]' : 'text-[#737b91]'}`}
             >
               <List className="w-4 h-4" />
             </button>
@@ -128,21 +167,21 @@ export const DealsPage: React.FC<DealsProps> = ({ onSelectDeal }) => {
       </div>
 
       {/* SEARCH & FILTERS BAR */}
-      <div className="luxury-card rounded-2xl p-3 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div className="executive-panel rounded-2xl p-3 flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="relative w-full sm:w-72">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+          <Search className="w-4 h-4 text-[#737b91] absolute left-3 top-2.5" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search address, city, realtor..."
-            className="w-full pl-9 pr-3 py-1.5 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500"
+            className="w-full pl-9 pr-3 py-1.5 bg-[#070811] border border-[#202641] rounded-xl text-xs text-white focus:outline-none focus:border-[#7c5cfc]"
           />
         </div>
 
-        <div className="text-xs text-slate-400 flex items-center gap-2">
-          <span className="font-semibold text-slate-300">Total Volume:</span>
-          <span className="font-mono font-bold text-amber-400 text-sm">
+        <div className="text-xs text-[#a7adc0] flex items-center gap-2">
+          <span className="font-semibold text-slate-300">Active Volume:</span>
+          <span className="font-mono font-bold text-[#9b8afb] text-sm">
             ${filteredDeals.reduce((sum, d) => sum + d.askingPrice, 0).toLocaleString()}
           </span>
         </div>
@@ -159,17 +198,15 @@ export const DealsPage: React.FC<DealsProps> = ({ onSelectDeal }) => {
                 key={stage}
                 onDragOver={handleDragOver}
                 onDrop={(e) => handleDrop(e, stage)}
-                className="w-80 flex-shrink-0 bg-slate-950/60 border border-slate-800/80 rounded-2xl p-3.5 flex flex-col max-h-[75vh]"
+                className="w-80 flex-shrink-0 bg-[#0b0d18] border border-[#202641] rounded-2xl p-3.5 flex flex-col max-h-[75vh]"
               >
-                {/* Column Header */}
-                <div className="flex justify-between items-center pb-3 border-b border-slate-800 mb-3">
-                  <span className="text-xs font-bold uppercase tracking-wider text-slate-200">{stage}</span>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-slate-900 text-amber-400 border border-slate-800">
+                <div className="flex justify-between items-center pb-3 border-b border-[#202641] mb-3">
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#a7adc0]">{stage}</span>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#070811] text-[#9b8afb] border border-[#202641]">
                     {stageDeals.length}
                   </span>
                 </div>
 
-                {/* Cards Container */}
                 <div className="flex-1 overflow-y-auto space-y-3 pr-1">
                   {stageDeals.map((deal) => (
                     <div
@@ -177,33 +214,42 @@ export const DealsPage: React.FC<DealsProps> = ({ onSelectDeal }) => {
                       draggable={!isReadOnly}
                       onDragStart={(e) => handleDragStart(e, deal.id)}
                       onClick={() => onSelectDeal(deal)}
-                      className="luxury-card luxury-card-hover rounded-xl p-3.5 cursor-pointer border border-slate-800/80 hover:border-amber-500/50 transition-all group relative"
+                      className="executive-panel executive-panel-hover rounded-xl p-3.5 cursor-pointer border border-[#202641] group relative"
                     >
                       <div className="flex justify-between items-start mb-1.5">
-                        <span className={`w-5 h-5 rounded font-bold text-[10px] flex items-center justify-center ${
-                          deal.grade === 'A' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-blue-500/20 text-blue-400'
-                        }`}>
+                        <span className="w-5 h-5 rounded font-bold text-[10px] flex items-center justify-center bg-[#101323] text-[#9b8afb] border border-[#202641]">
                           {deal.grade}
                         </span>
-                        <span className="text-xs font-mono font-bold text-amber-400">
+                        <span className="text-xs font-mono font-bold text-[#f5f5f7]">
                           ${deal.askingPrice.toLocaleString()}
                         </span>
                       </div>
 
-                      <div className="font-bold text-xs text-white group-hover:text-amber-300 transition-colors">
+                      <div className="font-bold text-xs text-white group-hover:text-[#9b8afb] transition-colors">
                         {deal.address}
                       </div>
-                      <div className="text-[10px] text-slate-400 mb-3">{deal.city}, {deal.state}</div>
+                      <div className="text-[10px] text-[#737b91] mb-3">{deal.city}, {deal.state}</div>
 
-                      <div className="flex items-center justify-between pt-2 border-t border-slate-800/60 text-[10px] text-slate-400">
+                      <div className="flex items-center justify-between pt-2 border-t border-[#202641] text-[10px] text-[#737b91]">
                         <span>{deal.realtorName}</span>
-                        <span className="font-mono text-slate-400">{deal.updatedAt}</span>
+                        {!isReadOnly && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setArchivingDealId(deal.id);
+                            }}
+                            className="text-[#737b91] hover:text-[#d05a72]"
+                            title="Soft Delete Deal"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}
 
                   {stageDeals.length === 0 && (
-                    <div className="h-24 border-2 border-dashed border-slate-900 rounded-xl flex items-center justify-center text-[11px] text-slate-400">
+                    <div className="h-20 border border-dashed border-[#202641] rounded-xl flex items-center justify-center text-[11px] text-[#737b91]">
                       Drop Deal Here
                     </div>
                   )}
@@ -217,42 +263,129 @@ export const DealsPage: React.FC<DealsProps> = ({ onSelectDeal }) => {
 
       {/* LIST VIEW */}
       {viewMode === 'list' && (
-        <div className="luxury-card rounded-2xl overflow-hidden shadow-xl">
+        <div className="executive-panel rounded-2xl overflow-hidden shadow-xl">
           <table className="w-full text-left text-xs">
             <thead>
-              <tr className="border-b border-slate-800 text-slate-400 uppercase tracking-wider text-[10px] bg-slate-950/60">
+              <tr className="border-b border-[#202641] text-[#737b91] uppercase tracking-wider text-[10px] bg-[#070811]">
                 <th className="py-3 px-4">Property Address</th>
                 <th className="py-3 px-4">Stage</th>
                 <th className="py-3 px-4">Asking Price</th>
                 <th className="py-3 px-4">Realtor</th>
                 <th className="py-3 px-4">Owner</th>
-                <th className="py-3 px-4 text-right">Action</th>
+                <th className="py-3 px-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 text-slate-200">
+            <tbody className="divide-y divide-[#202641] text-[#f5f5f7]">
               {filteredDeals.map((deal) => (
-                <tr key={deal.id} className="hover:bg-slate-900/40 transition-colors">
+                <tr key={deal.id} className="hover:bg-[#171c33]/40 transition-colors">
                   <td className="py-3.5 px-4 font-bold text-white">{deal.address}, {deal.city}</td>
                   <td className="py-3.5 px-4">
-                    <span className="px-2.5 py-1 rounded bg-slate-900 border border-slate-700 text-amber-400 font-bold text-[10px]">
+                    <span className="px-2.5 py-1 rounded bg-[#070811] border border-[#202641] text-[#9b8afb] font-bold text-[10px]">
                       {deal.stage}
                     </span>
                   </td>
                   <td className="py-3.5 px-4 font-mono font-bold text-white">${deal.askingPrice.toLocaleString()}</td>
-                  <td className="py-3.5 px-4 text-slate-300">{deal.realtorName}</td>
-                  <td className="py-3.5 px-4 text-slate-300">{deal.ownerName}</td>
-                  <td className="py-3.5 px-4 text-right">
+                  <td className="py-3.5 px-4 text-[#a7adc0]">{deal.realtorName}</td>
+                  <td className="py-3.5 px-4 text-[#a7adc0]">{deal.ownerName}</td>
+                  <td className="py-3.5 px-4 text-right space-x-2">
                     <button
                       onClick={() => onSelectDeal(deal)}
-                      className="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-lg text-[11px]"
+                      className="px-3 py-1 bg-[#101323] text-white font-semibold rounded-lg text-[11px]"
                     >
-                      View Details
+                      Inspect
                     </button>
+                    {!isReadOnly && (
+                      <button
+                        onClick={() => setArchivingDealId(deal.id)}
+                        className="p-1 rounded bg-[#101323] text-[#d05a72] hover:bg-[#d05a72]/20"
+                        title="Archive Deal"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* CREATE DEAL MODAL */}
+      {showAddDealModal && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="executive-panel w-full max-w-lg rounded-2xl p-6 relative space-y-4">
+            <button onClick={() => setShowAddDealModal(false)} className="absolute top-5 right-5 text-[#737b91] hover:text-white">
+              <X className="w-5 h-5" />
+            </button>
+            
+            <h3 className="text-lg font-bold text-white">Create Acquisition Deal</h3>
+            
+            <form onSubmit={handleCreateDeal} className="space-y-3 text-xs">
+              <div>
+                <label className="block text-[#a7adc0] font-semibold mb-1">Property Address</label>
+                <input
+                  type="text"
+                  required
+                  value={newDeal.address}
+                  onChange={(e) => setNewDeal({ ...newDeal, address: e.target.value })}
+                  className="w-full px-3 py-2 bg-[#070811] border border-[#202641] rounded-xl text-white focus:outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[#a7adc0] font-semibold mb-1">Asking Price ($)</label>
+                  <input
+                    type="number"
+                    required
+                    value={newDeal.askingPrice}
+                    onChange={(e) => setNewDeal({ ...newDeal, askingPrice: Number(e.target.value) })}
+                    className="w-full px-3 py-2 bg-[#070811] border border-[#202641] rounded-xl text-white focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[#a7adc0] font-semibold mb-1">Realtor Name</label>
+                  <input
+                    type="text"
+                    required
+                    value={newDeal.realtorName}
+                    onChange={(e) => setNewDeal({ ...newDeal, realtorName: e.target.value })}
+                    className="w-full px-3 py-2 bg-[#070811] border border-[#202641] rounded-xl text-white focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-3 bg-[#7c5cfc] hover:bg-[#6847e8] text-white font-bold rounded-xl mt-3"
+              >
+                Save Deal To Pipeline
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* CONFIRM ARCHIVE DEAL MODAL */}
+      {archivingDealId && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="executive-panel w-full max-w-sm rounded-2xl p-6 relative space-y-4 text-center">
+            <h3 className="text-base font-bold text-white">Archive Deal Record?</h3>
+            <p className="text-xs text-[#a7adc0]">Soft-deletes deal and moves it to Trash stage.</p>
+            <div className="flex gap-2">
+              <button onClick={() => setArchivingDealId(null)} className="flex-1 py-2.5 bg-[#101323] text-slate-300 text-xs font-bold rounded-xl">Cancel</button>
+              <button
+                onClick={() => {
+                  archiveDeal(archivingDealId);
+                  setArchivingDealId(null);
+                }}
+                className="flex-1 py-2.5 bg-[#d05a72] text-white text-xs font-bold rounded-xl"
+              >
+                Confirm Archive
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

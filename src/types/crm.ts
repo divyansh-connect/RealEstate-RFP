@@ -7,9 +7,10 @@ export interface UserProfile {
   role: UserRole;
   avatar: string;
   title: string;
+  status: 'Active' | 'Deactivated';
 }
 
-export type ContactStatus = 'New' | 'Enrolled' | 'Engaged' | 'Opted Out' | 'DNC' | 'Converted';
+export type ContactStatus = 'New' | 'Enrolled' | 'Engaged' | 'Opted Out' | 'DNC' | 'Converted' | 'Archived';
 export type Grade = 'A' | 'B' | 'C' | 'D';
 
 export interface RealtorContact {
@@ -28,7 +29,8 @@ export interface RealtorContact {
   lastResponse: string;
   grade: Grade;
   score: number;
-  notesCount: number;
+  notes: string[];
+  isArchived?: boolean;
 }
 
 export interface ActivityEvent {
@@ -39,7 +41,6 @@ export interface ActivityEvent {
   description: string;
   timestamp: string;
   actor: string;
-  metadata?: Record<string, any>;
 }
 
 export type AIStatus = 'Active' | 'Human Takeover' | 'AI Off';
@@ -114,6 +115,7 @@ export interface PropertyDeal {
   createdAt: string;
   updatedAt: string;
   source: string;
+  isArchived?: boolean;
   offerDetails?: {
     purchasePrice: number;
     earnestMoney: number;

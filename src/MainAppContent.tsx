@@ -12,10 +12,10 @@ import { DealDetailDrawer } from './components/DealDetailDrawer';
 import { ReportsPage } from './components/ReportsPage';
 import { SettingsPage } from './components/SettingsPage';
 import { ClickToCallModal } from './components/ClickToCallModal';
-import { RealtorContact, PropertyDeal } from './types/crm';
+import type { RealtorContact, PropertyDeal } from './types/crm';
 
 export const MainAppContent: React.FC = () => {
-  const { isAuthenticated, setActiveConversationId } = useApp();
+  const { isAuthenticated, setActiveConversationId, currentUser } = useApp();
   
   const [activeTab, setActiveTab] = useState<string>('dashboard');
   
@@ -28,22 +28,40 @@ export const MainAppContent: React.FC = () => {
     return <LoginPage />;
   }
 
+  // Strict Navigation Access Verification Matrix
+  const allowedTabs: Record<string, string[]> = {
+    ADMIN: ['dashboard', 'contacts', 'conversations', 'leadqueue', 'deals', 'reports', 'settings'],
+    MANAGER: ['dashboard', 'contacts', 'conversations', 'leadqueue', 'deals', 'reports', 'settings'],
+    AGENT: ['dashboard', 'contacts', 'conversations', 'leadqueue', 'deals'],
+    READ_ONLY: ['dashboard', 'contacts', 'conversations', 'deals', 'reports']
+  };
+
+  const userRole = currentUser.role;
+  const userAllowedTabs = allowedTabs[userRole] || ['dashboard'];
+
+  // Guard against unauthorized route tab selection
+  const safeActiveTab = userAllowedTabs.includes(activeTab) ? activeTab : 'dashboard';
+
   const handleNavigateWithTarget = (tab: string, convId?: string) => {
-    setActiveTab(tab);
+    if (userAllowedTabs.includes(tab)) {
+      setActiveTab(tab);
+    } else {
+      setActiveTab('dashboard');
+    }
     if (convId) {
       setActiveConversationId(convId);
     }
   };
 
   return (
-    <AppShell activeTab={activeTab} setActiveTab={setActiveTab}>
-      {activeTab === 'dashboard' && <DashboardPage onNavigate={handleNavigateWithTarget} />}
-      {activeTab === 'contacts' && <ContactsPage onSelectContact={(c) => setSelectedContact(c)} />}
-      {activeTab === 'conversations' && <ConversationsPage />}
-      {activeTab === 'leadqueue' && <LeadQueuePage onNavigate={handleNavigateWithTarget} />}
-      {activeTab === 'deals' && <DealsPage onSelectDeal={(d) => setSelectedDeal(d)} />}
-      {activeTab === 'reports' && <ReportsPage />}
-      {activeTab === 'settings' && <SettingsPage />}
+    <AppShell activeTab={safeActiveTab} setActiveTab={handleNavigateWithTarget}>
+      {safeActiveTab === 'dashboard' && <DashboardPage onNavigate={handleNavigateWithTarget} />}
+      {safeActiveTab === 'contacts' && <ContactsPage onSelectContact={(c) => setSelectedContact(c)} />}
+      {safeActiveTab === 'conversations' && <ConversationsPage />}
+      {safeActiveTab === 'leadqueue' && <LeadQueuePage onNavigate={handleNavigateWithTarget} />}
+      {safeActiveTab === 'deals' && <DealsPage onSelectDeal={(d) => setSelectedDeal(d)} />}
+      {safeActiveTab === 'reports' && <ReportsPage />}
+      {safeActiveTab === 'settings' && <SettingsPage />}
 
       {/* DRAWERS & MODALS */}
       <ContactDetailDrawer
