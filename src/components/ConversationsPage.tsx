@@ -8,7 +8,11 @@ import {
   Building,
   Flame,
   Search,
-  X
+  X,
+  ArrowLeft,
+  Info,
+  MessageSquare,
+  Sliders
 } from 'lucide-react';
 
 export const ConversationsPage: React.FC = () => {
@@ -26,6 +30,9 @@ export const ConversationsPage: React.FC = () => {
   const [messageInput, setMessageInput] = useState('');
   const [filterCategory, setFilterCategory] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Mobile View Switcher State ('list' | 'chat' | 'details')
+  const [mobileView, setMobileView] = useState<'list' | 'chat' | 'details'>('chat');
 
   // Grade Override Modal state
   const [showOverrideModal, setShowOverrideModal] = useState(false);
@@ -93,11 +100,41 @@ export const ConversationsPage: React.FC = () => {
         )}
       </div>
 
+      {/* MOBILE SEGMENTED VIEW SWITCHER (VISIBLE ONLY ON MOBILE < LG) */}
+      <div className="lg:hidden flex items-center bg-[#070811] p-1 rounded-xl border border-[#202641]">
+        <button
+          onClick={() => setMobileView('list')}
+          className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+            mobileView === 'list' ? 'bg-[#7c5cfc] text-white shadow-md' : 'text-[#a7adc0]'
+          }`}
+        >
+          <MessageSquare className="w-3.5 h-3.5" /> Threads ({filteredConversations.length})
+        </button>
+        <button
+          onClick={() => setMobileView('chat')}
+          className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+            mobileView === 'chat' ? 'bg-[#7c5cfc] text-white shadow-md' : 'text-[#a7adc0]'
+          }`}
+        >
+          <Send className="w-3.5 h-3.5" /> Chat
+        </button>
+        <button
+          onClick={() => setMobileView('details')}
+          className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+            mobileView === 'details' ? 'bg-[#7c5cfc] text-white shadow-md' : 'text-[#a7adc0]'
+          }`}
+        >
+          <Info className="w-3.5 h-3.5" /> Details
+        </button>
+      </div>
+
       {/* WORKSPACE MAIN 3-COLUMN LAYOUT */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 min-h-0 overflow-hidden">
         
         {/* COLUMN 1: CONVERSATION LIST (4 COLS) */}
-        <div className="lg:col-span-4 executive-panel rounded-2xl flex flex-col overflow-hidden">
+        <div className={`lg:col-span-4 executive-panel rounded-2xl flex flex-col overflow-hidden ${
+          mobileView === 'list' ? 'flex h-full' : 'hidden lg:flex'
+        }`}>
           
           {/* List Search & Filters */}
           <div className="p-3 border-b border-[#202641] space-y-2 bg-[#070811]">
@@ -135,7 +172,10 @@ export const ConversationsPage: React.FC = () => {
               return (
                 <div
                   key={conv.id}
-                  onClick={() => setActiveConversationId(conv.id)}
+                  onClick={() => {
+                    setActiveConversationId(conv.id);
+                    setMobileView('chat');
+                  }}
                   className={`p-3.5 cursor-pointer transition-all ${
                     isSelected ? 'bg-[#171c33] border-l-4 border-[#7c5cfc]' : 'hover:bg-[#171c33]/40'
                   }`}
@@ -168,45 +208,67 @@ export const ConversationsPage: React.FC = () => {
         </div>
 
         {/* COLUMN 2: THREAD & COMPOSER (5 COLS) */}
-        <div className="lg:col-span-5 executive-panel rounded-2xl flex flex-col overflow-hidden">
+        <div className={`lg:col-span-5 executive-panel rounded-2xl flex flex-col overflow-hidden ${
+          mobileView === 'chat' ? 'flex h-full' : 'hidden lg:flex'
+        }`}>
           
           {/* Thread Header */}
           {activeConv && (
-            <div className="p-3.5 border-b border-[#202641] bg-[#070811] flex items-center justify-between">
-              <div>
-                <div className="text-xs font-bold text-white">{activeConv.realtorName}</div>
-                <div className="text-[10px] text-[#a7adc0]">{activeConv.brokerage} &bull; {activeConv.realtorPhone}</div>
+            <div className="p-3 border-b border-[#202641] bg-[#070811] flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setMobileView('list')}
+                  className="lg:hidden p-1.5 rounded-lg bg-[#101323] border border-[#202641] text-[#a7adc0] hover:text-white"
+                  title="Back to Threads List"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                </button>
+
+                <div>
+                  <div className="text-xs font-bold text-white leading-tight">{activeConv.realtorName}</div>
+                  <div className="text-[10px] text-[#a7adc0]">{activeConv.brokerage} &bull; {activeConv.realtorPhone}</div>
+                </div>
               </div>
 
-              {/* AI Controls */}
-              {!isReadOnly && (
-                <div className="flex items-center gap-1 bg-[#101323] p-1 rounded-xl border border-[#202641]">
-                  <button
-                    onClick={() => toggleAiTakeover(activeConv.id, 'Active')}
-                    className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all ${
-                      activeConv.aiStatus === 'Active' ? 'bg-[#7c5cfc] text-white shadow-md' : 'text-[#a7adc0] hover:text-white'
-                    }`}
-                  >
-                    AI Active
-                  </button>
-                  <button
-                    onClick={() => toggleAiTakeover(activeConv.id, 'Human Takeover')}
-                    className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all ${
-                      activeConv.aiStatus === 'Human Takeover' ? 'bg-[#5965d8] text-white shadow-md' : 'text-[#a7adc0] hover:text-white'
-                    }`}
-                  >
-                    Human Takeover
-                  </button>
-                  <button
-                    onClick={() => toggleAiTakeover(activeConv.id, 'AI Off')}
-                    className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all ${
-                      activeConv.aiStatus === 'AI Off' ? 'bg-[#d05a72] text-white shadow-md' : 'text-[#a7adc0] hover:text-white'
-                    }`}
-                  >
-                    AI Off
-                  </button>
-                </div>
-              )}
+              {/* AI Controls & Mobile Info Button */}
+              <div className="flex items-center gap-2">
+                {!isReadOnly && (
+                  <div className="flex items-center gap-1 bg-[#101323] p-1 rounded-xl border border-[#202641]">
+                    <button
+                      onClick={() => toggleAiTakeover(activeConv.id, 'Active')}
+                      className={`px-2 py-1 rounded-lg text-[10px] font-bold transition-all ${
+                        activeConv.aiStatus === 'Active' ? 'bg-[#7c5cfc] text-white shadow-md' : 'text-[#a7adc0] hover:text-white'
+                      }`}
+                    >
+                      AI Active
+                    </button>
+                    <button
+                      onClick={() => toggleAiTakeover(activeConv.id, 'Human Takeover')}
+                      className={`px-2 py-1 rounded-lg text-[10px] font-bold transition-all ${
+                        activeConv.aiStatus === 'Human Takeover' ? 'bg-[#5965d8] text-white shadow-md' : 'text-[#a7adc0] hover:text-white'
+                      }`}
+                    >
+                      Human
+                    </button>
+                    <button
+                      onClick={() => toggleAiTakeover(activeConv.id, 'AI Off')}
+                      className={`px-2 py-1 rounded-lg text-[10px] font-bold transition-all ${
+                        activeConv.aiStatus === 'AI Off' ? 'bg-[#d05a72] text-white shadow-md' : 'text-[#a7adc0] hover:text-white'
+                      }`}
+                    >
+                      Off
+                    </button>
+                  </div>
+                )}
+
+                <button
+                  onClick={() => setMobileView('details')}
+                  className="lg:hidden p-1.5 rounded-lg bg-[#101323] border border-[#202641] text-[#9b8afb] hover:text-white"
+                  title="View Qualification Details"
+                >
+                  <Info className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           )}
 
@@ -263,11 +325,23 @@ export const ConversationsPage: React.FC = () => {
         </div>
 
         {/* COLUMN 3: REALTOR & AI CONTEXT PANEL (3 COLS) */}
-        <div className="lg:col-span-3 executive-panel rounded-2xl p-4 flex flex-col justify-between overflow-y-auto space-y-4">
+        <div className={`lg:col-span-3 executive-panel rounded-2xl p-4 flex flex-col justify-between overflow-y-auto space-y-4 ${
+          mobileView === 'details' ? 'flex h-full' : 'hidden lg:flex'
+        }`}>
           
           {activeConv && (
             <>
               <div>
+                <div className="lg:hidden flex items-center justify-between pb-3 mb-2 border-b border-[#202641]">
+                  <button
+                    onClick={() => setMobileView('chat')}
+                    className="flex items-center gap-1 text-xs text-[#9b8afb] font-bold"
+                  >
+                    <ArrowLeft className="w-4 h-4" /> Back to Chat
+                  </button>
+                  <span className="text-xs font-bold text-white uppercase">Qualification Panel</span>
+                </div>
+
                 <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-3 flex items-center justify-between">
                   Thread Classification
                   <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#101323] text-[#9b8afb] border border-[#202641]">
