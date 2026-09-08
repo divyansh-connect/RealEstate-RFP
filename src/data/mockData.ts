@@ -191,6 +191,12 @@ export const INITIAL_DEALS: PropertyDeal[] = [
     createdAt: 'Today, 10:22 AM',
     updatedAt: '10 mins ago',
     source: 'AI Outreach Capture',
+    underwriting: {
+      arv: 1850000,
+      estimatedRehab: 280000,
+      targetWholesaleFee: 75000,
+      calculatedMao: 1495000
+    },
     offerDetails: {
       purchasePrice: 1380000,
       earnestMoney: 25000,

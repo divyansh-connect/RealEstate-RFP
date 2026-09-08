@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import type { PropertyDeal } from '../types/crm';
 import {
@@ -7,8 +7,13 @@ import {
   Building,
   Download,
   FileText,
-  RefreshCw,
-  AlertTriangle
+  Calculator,
+  Edit2,
+  CheckCircle,
+  PlusCircle,
+  DollarSign,
+  AlertTriangle,
+  RefreshCw
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -19,23 +24,109 @@ interface DealDetailProps {
 }
 
 export const DealDetailDrawer: React.FC<DealDetailProps> = ({ deal, onClose, onOpenConversation }) => {
-  const { addGeneratedContract, currentUser } = useApp();
+  const { addGeneratedContract, updateDeal, currentUser } = useApp();
   
   // Contract Generator Wizard Modal State
   const [showContractWizard, setShowContractWizard] = useState(false);
   const [wizardStep, setWizardStep] = useState<1 | 2 | 3 | 4>(1);
   const [selectedTemplate, setSelectedTemplate] = useState('TREC One to Four Family Residential Contract');
   const [isGenerating, setIsGenerating] = useState(false);
-
-  // Validation state
   const [purchasePriceVal, setPurchasePriceVal] = useState<number>(deal?.offerDetails?.purchasePrice || 0);
+
+  // Underwriting Calculator State
+  const [arvInput, setArvInput] = useState<string>('');
+  const [rehabInput, setRehabInput] = useState<string>('');
+  const [wholesaleFeeInput, setWholesaleFeeInput] = useState<string>('');
+  const [underwritingSuccessMsg, setUnderwritingSuccessMsg] = useState<string | null>(null);
+
+  // Offer Details Form State
+  const [isEditingOffer, setIsEditingOffer] = useState<boolean>(false);
+  const [purchasePriceInput, setPurchasePriceInput] = useState<string>('');
+  const [earnestMoneyInput, setEarnestMoneyInput] = useState<string>('');
+  const [optionFeeInput, setOptionFeeInput] = useState<string>('');
+  const [optionDaysInput, setOptionDaysInput] = useState<string>('');
+  const [buyerEntityInput, setBuyerEntityInput] = useState<string>('');
+  const [closingDateInput, setClosingDateInput] = useState<string>('');
+  const [offerSuccessMsg, setOfferSuccessMsg] = useState<string | null>(null);
+
+  // Sync inputs whenever deal changes (only reset edit mode when deal.id changes)
+  useEffect(() => {
+    if (deal) {
+      // Underwriting init
+      setArvInput(deal.underwriting?.arv ? deal.underwriting.arv.toString() : (deal.askingPrice ? Math.round(deal.askingPrice * 1.25).toString() : '500000'));
+      setRehabInput(deal.underwriting?.estimatedRehab ? deal.underwriting.estimatedRehab.toString() : '50000');
+      setWholesaleFeeInput(deal.underwriting?.targetWholesaleFee ? deal.underwriting.targetWholesaleFee.toString() : '25000');
+
+      // Offer details init
+      setPurchasePriceInput(deal.offerDetails?.purchasePrice ? deal.offerDetails.purchasePrice.toString() : (deal.askingPrice ? deal.askingPrice.toString() : '450000'));
+      setEarnestMoneyInput(deal.offerDetails?.earnestMoney ? deal.offerDetails.earnestMoney.toString() : '5000');
+      setOptionFeeInput(deal.offerDetails?.optionFee ? deal.offerDetails.optionFee.toString() : '500');
+      setOptionDaysInput(deal.offerDetails?.optionPeriodDays ? deal.offerDetails.optionPeriodDays.toString() : '7');
+      setBuyerEntityInput(deal.offerDetails?.buyerEntity || 'Apex Acquisitions DFW LLC');
+      setClosingDateInput(deal.offerDetails?.closingDate || new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
+    }
+  }, [deal?.id]);
 
   if (!deal) return null;
 
   const isReadOnly = currentUser.role === 'READ_ONLY';
 
+  // Real-time MAO Calculation
+  const arvNum = parseFloat(arvInput) || 0;
+  const rehabNum = parseFloat(rehabInput) || 0;
+  const feeNum = parseFloat(wholesaleFeeInput) || 0;
+  const calculatedMao = Math.max(0, arvNum - rehabNum - feeNum);
+
+  const handleSaveUnderwriting = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!deal) return;
+
+    updateDeal(deal.id, {
+      underwriting: {
+        arv: arvNum,
+        estimatedRehab: rehabNum,
+        targetWholesaleFee: feeNum,
+        calculatedMao
+      }
+    });
+
+    setUnderwritingSuccessMsg('Underwriting MAO saved successfully.');
+    setTimeout(() => setUnderwritingSuccessMsg(null), 3000);
+  };
+
+  const handleSaveOffer = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!deal) return;
+
+    const pPrice = parseFloat(purchasePriceInput) || 0;
+    const eMoney = parseFloat(earnestMoneyInput) || 0;
+    const oFee = parseFloat(optionFeeInput) || 0;
+    const oDays = parseInt(optionDaysInput, 10) || 7;
+
+    const updatedOffer = {
+      purchasePrice: pPrice,
+      earnestMoney: eMoney,
+      optionFee: oFee,
+      optionPeriodDays: oDays,
+      buyerEntity: buyerEntityInput || 'Apex Acquisitions DFW LLC',
+      closingDate: closingDateInput || new Date().toISOString().split('T')[0],
+      sellerName: deal.offerDetails?.sellerName || deal.realtorName || 'Property Seller',
+      titleCompany: deal.offerDetails?.titleCompany || 'Republic Title DFW',
+      financingType: deal.offerDetails?.financingType || 'Cash',
+      inspectionPeriodDays: oDays,
+      specialProvisions: deal.offerDetails?.specialProvisions || 'AS-IS cash acquisition.'
+    };
+
+    updateDeal(deal.id, {
+      offerDetails: updatedOffer
+    });
+
+    setIsEditingOffer(false);
+    setOfferSuccessMsg('Offer details saved successfully.');
+    setTimeout(() => setOfferSuccessMsg(null), 3000);
+  };
+
   const handleStartContractWizard = () => {
-    setPurchasePriceVal(deal.offerDetails?.purchasePrice || deal.askingPrice);
     setShowContractWizard(true);
     setWizardStep(1);
   };
@@ -132,37 +223,261 @@ export const DealDetailDrawer: React.FC<DealDetailProps> = ({ deal, onClose, onO
             )}
           </div>
 
-          {/* OFFER TERMS */}
-          {deal.offerDetails && (
-            <div className="executive-panel rounded-2xl p-5 space-y-4">
-              <h3 className="text-xs font-bold text-white uppercase tracking-wider border-b border-[#202641] pb-2">
-                Underwriting Purchase Terms
+          {/* SECTION 1: INTERACTIVE UNDERWRITING / MAO CALCULATOR */}
+          <div className="executive-panel rounded-2xl p-5 space-y-4">
+            <div className="flex items-center justify-between border-b border-[#202641] pb-3">
+              <h3 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <Calculator className="w-4 h-4 text-[#7c5cfc]" /> Underwriting MAO Calculator
               </h3>
+              {underwritingSuccessMsg && (
+                <span className="text-xs text-[#35b77a] font-bold flex items-center gap-1">
+                  <CheckCircle className="w-3.5 h-3.5" /> {underwritingSuccessMsg}
+                </span>
+              )}
+            </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs">
+            <form onSubmit={handleSaveUnderwriting} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                  <span className="text-[#737b91] block text-[10px]">Purchase Offer</span>
-                  <strong className="text-white text-sm font-mono">${deal.offerDetails.purchasePrice.toLocaleString()}</strong>
+                  <label className="block text-[10px] uppercase font-bold text-[#a7adc0] mb-1">
+                    ARV (After Repair Value)
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-2 text-xs text-[#737b91] font-mono">$</span>
+                    <input
+                      type="number"
+                      disabled={isReadOnly}
+                      value={arvInput}
+                      onChange={(e) => setArvInput(e.target.value)}
+                      placeholder="e.g. 500000"
+                      className="w-full bg-[#101323] border border-[#202641] focus:border-[#7c5cfc] rounded-xl pl-7 pr-3 py-2 text-xs font-mono text-white placeholder-[#737b91] focus:outline-none transition-all disabled:opacity-60"
+                    />
+                  </div>
                 </div>
+
                 <div>
-                  <span className="text-[#737b91] block text-[10px]">Earnest Money</span>
-                  <strong className="text-white text-sm font-mono">${deal.offerDetails.earnestMoney.toLocaleString()}</strong>
+                  <label className="block text-[10px] uppercase font-bold text-[#a7adc0] mb-1">
+                    Est. Rehab Cost
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-2 text-xs text-[#737b91] font-mono">$</span>
+                    <input
+                      type="number"
+                      disabled={isReadOnly}
+                      value={rehabInput}
+                      onChange={(e) => setRehabInput(e.target.value)}
+                      placeholder="e.g. 50000"
+                      className="w-full bg-[#101323] border border-[#202641] focus:border-[#7c5cfc] rounded-xl pl-7 pr-3 py-2 text-xs font-mono text-white placeholder-[#737b91] focus:outline-none transition-all disabled:opacity-60"
+                    />
+                  </div>
                 </div>
+
                 <div>
-                  <span className="text-[#737b91] block text-[10px]">Option Fee</span>
-                  <strong className="text-white text-sm font-mono">${deal.offerDetails.optionFee} ({deal.offerDetails.optionPeriodDays} Days)</strong>
-                </div>
-                <div>
-                  <span className="text-[#737b91] block text-[10px]">Buyer Entity</span>
-                  <strong className="text-white">{deal.offerDetails.buyerEntity}</strong>
-                </div>
-                <div>
-                  <span className="text-[#737b91] block text-[10px]">Closing Target</span>
-                  <strong className="text-[#9b8afb] font-mono">{deal.offerDetails.closingDate}</strong>
+                  <label className="block text-[10px] uppercase font-bold text-[#a7adc0] mb-1">
+                    Target Margin / Fee
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-2 text-xs text-[#737b91] font-mono">$</span>
+                    <input
+                      type="number"
+                      disabled={isReadOnly}
+                      value={wholesaleFeeInput}
+                      onChange={(e) => setWholesaleFeeInput(e.target.value)}
+                      placeholder="e.g. 25000"
+                      className="w-full bg-[#101323] border border-[#202641] focus:border-[#7c5cfc] rounded-xl pl-7 pr-3 py-2 text-xs font-mono text-white placeholder-[#737b91] focus:outline-none transition-all disabled:opacity-60"
+                    />
+                  </div>
                 </div>
               </div>
+
+              {/* MAO CALCULATED BANNER */}
+              <div className="p-3.5 rounded-xl bg-[#070811] border border-[#7c5cfc]/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                <div>
+                  <span className="text-[10px] font-bold text-[#9b8afb] uppercase tracking-wider block">
+                    Calculated Maximum Allowable Offer (MAO)
+                  </span>
+                  <span className="text-xs text-[#a7adc0]">
+                    Formula: ARV (${arvNum.toLocaleString()}) - Rehab (${rehabNum.toLocaleString()}) - Fee (${feeNum.toLocaleString()})
+                  </span>
+                </div>
+                <div className="text-xl font-bold font-mono text-[#35b77a]">
+                  ${calculatedMao.toLocaleString()}
+                </div>
+              </div>
+
+              {!isReadOnly && (
+                <div className="flex justify-end">
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-[#7c5cfc] hover:bg-[#6847e8] text-white text-xs font-bold rounded-xl transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <CheckCircle className="w-3.5 h-3.5" /> Save Underwriting Values
+                  </button>
+                </div>
+              )}
+            </form>
+          </div>
+
+          {/* SECTION 2: OFFER ENTRY & EDIT FORM */}
+          <div className="executive-panel rounded-2xl p-5 space-y-4">
+            <div className="flex items-center justify-between border-b border-[#202641] pb-3">
+              <h3 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                <DollarSign className="w-4 h-4 text-[#35b77a]" /> Purchase Offer Details
+              </h3>
+
+              {offerSuccessMsg && (
+                <span className="text-xs text-[#35b77a] font-bold flex items-center gap-1">
+                  <CheckCircle className="w-3.5 h-3.5" /> {offerSuccessMsg}
+                </span>
+              )}
+
+              {!isReadOnly && !isEditingOffer && (
+                <button
+                  onClick={() => setIsEditingOffer(true)}
+                  className="px-3 py-1.5 bg-[#101323] border border-[#202641] hover:border-[#7c5cfc]/40 text-[#9b8afb] text-xs font-semibold rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
+                >
+                  {deal.offerDetails ? <Edit2 className="w-3.5 h-3.5" /> : <PlusCircle className="w-3.5 h-3.5" />}
+                  {deal.offerDetails ? 'Edit Offer' : 'Add Offer'}
+                </button>
+              )}
             </div>
-          )}
+
+            {/* READ-ONLY DISPLAY VIEW */}
+            {!isEditingOffer ? (
+              deal.offerDetails ? (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs">
+                  <div>
+                    <span className="text-[#737b91] block text-[10px] uppercase font-bold">Purchase Price</span>
+                    <strong className="text-white text-sm font-mono">${deal.offerDetails.purchasePrice.toLocaleString()}</strong>
+                  </div>
+                  <div>
+                    <span className="text-[#737b91] block text-[10px] uppercase font-bold">Earnest Money</span>
+                    <strong className="text-white text-sm font-mono">${deal.offerDetails.earnestMoney.toLocaleString()}</strong>
+                  </div>
+                  <div>
+                    <span className="text-[#737b91] block text-[10px] uppercase font-bold">Option Fee & Days</span>
+                    <strong className="text-white text-sm font-mono">${deal.offerDetails.optionFee} ({deal.offerDetails.optionPeriodDays} Days)</strong>
+                  </div>
+                  <div>
+                    <span className="text-[#737b91] block text-[10px] uppercase font-bold">Buyer Entity</span>
+                    <strong className="text-white text-xs">{deal.offerDetails.buyerEntity}</strong>
+                  </div>
+                  <div>
+                    <span className="text-[#737b91] block text-[10px] uppercase font-bold">Closing Target Date</span>
+                    <strong className="text-[#9b8afb] font-mono text-xs">{deal.offerDetails.closingDate}</strong>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-6 border border-dashed border-[#202641] rounded-xl text-xs text-[#737b91]">
+                  No formal offer submitted yet. {!isReadOnly && 'Click "Add Offer" to enter purchase terms.'}
+                </div>
+              )
+            ) : (
+              /* EDITING / ENTRY FORM VIEW */
+              <form onSubmit={handleSaveOffer} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  <div>
+                    <label className="block text-[10px] uppercase font-bold text-[#a7adc0] mb-1">
+                      Purchase Price ($)
+                    </label>
+                    <input
+                      type="number"
+                      required
+                      value={purchasePriceInput}
+                      onChange={(e) => setPurchasePriceInput(e.target.value)}
+                      placeholder="e.g. 450000"
+                      className="w-full bg-[#101323] border border-[#202641] focus:border-[#7c5cfc] rounded-xl px-3 py-2 text-xs font-mono text-white focus:outline-none transition-all"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] uppercase font-bold text-[#a7adc0] mb-1">
+                      Earnest Money ($)
+                    </label>
+                    <input
+                      type="number"
+                      required
+                      value={earnestMoneyInput}
+                      onChange={(e) => setEarnestMoneyInput(e.target.value)}
+                      placeholder="e.g. 5000"
+                      className="w-full bg-[#101323] border border-[#202641] focus:border-[#7c5cfc] rounded-xl px-3 py-2 text-xs font-mono text-white focus:outline-none transition-all"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] uppercase font-bold text-[#a7adc0] mb-1">
+                      Option Fee ($)
+                    </label>
+                    <input
+                      type="number"
+                      required
+                      value={optionFeeInput}
+                      onChange={(e) => setOptionFeeInput(e.target.value)}
+                      placeholder="e.g. 500"
+                      className="w-full bg-[#101323] border border-[#202641] focus:border-[#7c5cfc] rounded-xl px-3 py-2 text-xs font-mono text-white focus:outline-none transition-all"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] uppercase font-bold text-[#a7adc0] mb-1">
+                      Option Period (Days)
+                    </label>
+                    <input
+                      type="number"
+                      required
+                      value={optionDaysInput}
+                      onChange={(e) => setOptionDaysInput(e.target.value)}
+                      placeholder="e.g. 7"
+                      className="w-full bg-[#101323] border border-[#202641] focus:border-[#7c5cfc] rounded-xl px-3 py-2 text-xs font-mono text-white focus:outline-none transition-all"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] uppercase font-bold text-[#a7adc0] mb-1">
+                      Buyer Purchasing Entity
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={buyerEntityInput}
+                      onChange={(e) => setBuyerEntityInput(e.target.value)}
+                      placeholder="Apex Acquisitions DFW LLC"
+                      className="w-full bg-[#101323] border border-[#202641] focus:border-[#7c5cfc] rounded-xl px-3 py-2 text-xs text-white focus:outline-none transition-all"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] uppercase font-bold text-[#a7adc0] mb-1">
+                      Closing Target Date
+                    </label>
+                    <input
+                      type="date"
+                      required
+                      value={closingDateInput}
+                      onChange={(e) => setClosingDateInput(e.target.value)}
+                      className="w-full bg-[#101323] border border-[#202641] focus:border-[#7c5cfc] rounded-xl px-3 py-2 text-xs font-mono text-white focus:outline-none transition-all"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#202641]">
+                  <button
+                    type="button"
+                    onClick={() => setIsEditingOffer(false)}
+                    className="px-3.5 py-2 bg-[#101323] border border-[#202641] text-slate-300 text-xs font-semibold rounded-xl transition-all"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-[#35b77a] hover:bg-[#2da36c] text-white text-xs font-bold rounded-xl transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <CheckCircle className="w-3.5 h-3.5" /> Save Offer Terms
+                  </button>
+                </div>
+              </form>
+            )}
+          </div>
 
           {/* GENERATED CONTRACTS LOG */}
           <div className="executive-panel rounded-2xl p-5 space-y-3">

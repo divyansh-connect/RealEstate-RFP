@@ -127,6 +127,12 @@ export interface PropertyDeal {
   updatedAt: string;
   source: string;
   isArchived?: boolean;
+  underwriting?: {
+    arv: number;
+    estimatedRehab: number;
+    targetWholesaleFee: number;
+    calculatedMao: number;
+  };
   offerDetails?: {
     purchasePrice: number;
     earnestMoney: number;

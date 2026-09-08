@@ -15,7 +15,7 @@ import { ClickToCallModal } from './components/ClickToCallModal';
 import type { RealtorContact, PropertyDeal } from './types/crm';
 
 export const MainAppContent: React.FC = () => {
-  const { isAuthenticated, setActiveConversationId, currentUser } = useApp();
+  const { isAuthenticated, setActiveConversationId, currentUser, deals } = useApp();
   
   const [activeTab, setActiveTab] = useState<string>('dashboard');
   
@@ -60,6 +60,8 @@ export const MainAppContent: React.FC = () => {
     }
   };
 
+  const activeDealObj = deals.find(d => d.id === selectedDeal?.id) || selectedDeal;
+
   return (
     <AppShell activeTab={safeActiveTab} setActiveTab={handleNavigateWithTarget}>
       {safeActiveTab === 'dashboard' && <DashboardPage onNavigate={handleNavigateWithTarget} />}
@@ -78,7 +80,7 @@ export const MainAppContent: React.FC = () => {
       />
 
       <DealDetailDrawer
-        deal={selectedDeal}
+        deal={activeDealObj}
         onClose={() => setSelectedDeal(null)}
         onOpenConversation={(convId) => {
           setSelectedDeal(null);
