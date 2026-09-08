@@ -13,8 +13,8 @@ export const DashboardPage: React.FC<DashboardProps> = ({ onNavigate }) => {
   const activeDeals = deals.filter(d => !d.isArchived);
 
   const totalContacts = activeContacts.length;
-  const activeOutreach = activeContacts.filter(c => c.status === 'Enrolled' || c.status === 'Engaged').length;
-  const optedOut = activeContacts.filter(c => c.status === 'Opted Out' || c.status === 'DNC').length;
+  const activeOutreach = activeContacts.filter(c => c.status === 'Active in Outreach' || c.status === 'Responded').length;
+  const optedOut = activeContacts.filter(c => c.status === 'Opted Out' || c.status === 'Do Not Contact').length;
 
   const totalDealsCount = activeDeals.length;
   const activePipelineValue = activeDeals.reduce((acc, d) => acc + d.askingPrice, 0);

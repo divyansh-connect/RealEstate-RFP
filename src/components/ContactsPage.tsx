@@ -42,7 +42,7 @@ export const ContactsPage: React.FC<ContactsProps> = ({ onSelectContact }) => {
     email: '',
     phone: '',
     market: 'Dallas Metro',
-    status: 'Enrolled' as ContactStatus,
+    status: 'Active in Outreach' as ContactStatus,
     ownerId: currentUser.id,
     ownerName: currentUser.name,
     tags: ['Realtor Directory'],
@@ -135,7 +135,7 @@ export const ContactsPage: React.FC<ContactsProps> = ({ onSelectContact }) => {
                   email: '',
                   phone: '',
                   market: 'Dallas Metro',
-                  status: 'Enrolled',
+                  status: 'Active in Outreach',
                   ownerId: currentUser.id,
                   ownerName: currentUser.name,
                   tags: ['Realtor Directory'],
@@ -175,11 +175,12 @@ export const ContactsPage: React.FC<ContactsProps> = ({ onSelectContact }) => {
             className="bg-[#070811] border border-[#202641] text-[#f5f5f7] text-xs rounded-xl px-3 py-2 focus:outline-none focus:border-[#7c5cfc]"
           >
             <option value="ALL">All Statuses</option>
-            <option value="New">New</option>
-            <option value="Enrolled">Enrolled</option>
-            <option value="Engaged">Engaged</option>
+            <option value="Active in Outreach">Active in Outreach</option>
+            <option value="Responded">Responded</option>
+            <option value="Escalated">Escalated</option>
+            <option value="Declined">Declined</option>
             <option value="Opted Out">Opted Out</option>
-            <option value="DNC">DNC</option>
+            <option value="Do Not Contact">Do Not Contact</option>
           </select>
 
           <div className="flex items-center gap-1.5 text-xs text-[#a7adc0] ml-2">Grade:</div>
@@ -206,7 +207,7 @@ export const ContactsPage: React.FC<ContactsProps> = ({ onSelectContact }) => {
           <div className="flex items-center gap-2">
             <button
               onClick={() => {
-                bulkUpdateContacts(selectedIds, { status: 'Enrolled' });
+                bulkUpdateContacts(selectedIds, { status: 'Active in Outreach' });
                 setSelectedIds([]);
               }}
               className="px-3 py-1.5 rounded-lg bg-[#7c5cfc] text-white text-xs font-bold hover:bg-[#6847e8]"
@@ -215,7 +216,7 @@ export const ContactsPage: React.FC<ContactsProps> = ({ onSelectContact }) => {
             </button>
             <button
               onClick={() => {
-                bulkUpdateContacts(selectedIds, { status: 'Opted Out' });
+                bulkUpdateContacts(selectedIds, { status: 'Do Not Contact' });
                 setSelectedIds([]);
               }}
               className="px-3 py-1.5 rounded-lg bg-[#101323] text-[#d05a72] hover:bg-[#d05a72]/20 text-xs font-semibold"
@@ -282,7 +283,13 @@ export const ContactsPage: React.FC<ContactsProps> = ({ onSelectContact }) => {
                   <td className="py-3.5 px-4 text-[#a7adc0]">{c.market}</td>
 
                   <td className="py-3.5 px-4">
-                    <span className="px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider bg-[#101323] text-[#9b8afb] border border-[#202641]">
+                    <span className={`px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider ${
+                      c.status === 'Responded' ? 'bg-[#35b77a]/15 text-[#35b77a] border border-[#35b77a]/30' :
+                      c.status === 'Active in Outreach' ? 'bg-[#7c5cfc]/15 text-[#9b8afb] border border-[#7c5cfc]/30' :
+                      c.status === 'Escalated' ? 'bg-[#7c5cfc] text-white shadow-sm' :
+                      c.status === 'Declined' ? 'bg-[#101323] text-[#a7adc0] border border-[#202641]' :
+                      'bg-[#d05a72]/15 text-[#d05a72] border border-[#d05a72]/30'
+                    }`}>
                       {c.status}
                     </span>
                   </td>

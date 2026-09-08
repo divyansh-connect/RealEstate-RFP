@@ -10,7 +10,13 @@ export interface UserProfile {
   status: 'Active' | 'Deactivated';
 }
 
-export type ContactStatus = 'New' | 'Enrolled' | 'Engaged' | 'Opted Out' | 'DNC' | 'Converted' | 'Archived';
+export type ContactStatus = 
+  | 'Active in Outreach'
+  | 'Responded'
+  | 'Escalated'
+  | 'Declined'
+  | 'Opted Out'
+  | 'Do Not Contact';
 export type Grade = 'A' | 'B' | 'C' | 'D';
 
 export interface RealtorContact {

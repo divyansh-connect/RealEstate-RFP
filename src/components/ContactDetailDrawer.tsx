@@ -69,16 +69,16 @@ export const ContactDetailDrawer: React.FC<ContactDrawerProps> = ({ contact, onC
                 <Phone className="w-3.5 h-3.5" /> Call Realtor
               </button>
               
-              {contact.status === 'Enrolled' ? (
+              {contact.status === 'Active in Outreach' ? (
                 <button
-                  onClick={() => updateContact(contact.id, { status: 'New' })}
+                  onClick={() => updateContact(contact.id, { status: 'Declined' })}
                   className="px-3 py-1.5 rounded-lg bg-[#101323] hover:bg-[#171c33] text-slate-300 text-xs font-semibold flex items-center gap-1.5"
                 >
                   <Pause className="w-3.5 h-3.5 text-[#9b8afb]" /> Pause Cadence
                 </button>
               ) : (
                 <button
-                  onClick={() => updateContact(contact.id, { status: 'Enrolled' })}
+                  onClick={() => updateContact(contact.id, { status: 'Active in Outreach' })}
                   className="px-3 py-1.5 rounded-lg bg-[#101323] hover:bg-[#171c33] text-slate-300 text-xs font-semibold flex items-center gap-1.5"
                 >
                   <Play className="w-3.5 h-3.5 text-[#35b77a]" /> Enroll Cadence
@@ -86,7 +86,7 @@ export const ContactDetailDrawer: React.FC<ContactDrawerProps> = ({ contact, onC
               )}
 
               <button
-                onClick={() => updateContact(contact.id, { status: 'Opted Out' })}
+                onClick={() => updateContact(contact.id, { status: 'Do Not Contact' })}
                 className="px-3 py-1.5 rounded-lg bg-[#101323] hover:bg-[#d05a72]/20 text-[#d05a72] text-xs font-semibold flex items-center gap-1.5"
               >
                 <Ban className="w-3.5 h-3.5" /> Set DNC
