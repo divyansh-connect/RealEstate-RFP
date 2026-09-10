@@ -42,13 +42,13 @@ export const LeadQueuePage: React.FC<LeadQueueProps> = ({ onNavigate }) => {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12 relative">
-      
+
       {/* TOAST NOTIFICATION */}
       {toastMessage && (
-        <div className="fixed top-20 right-8 z-50 bg-[#161b33] border border-[#7c5cfc] text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 animate-fade-in">
-          <CheckCircle className="w-5 h-5 text-[#35b77a]" />
+        <div className="fixed top-20 right-8 z-50 bg-white border border-[#155EEF] text-[#0F172A] px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 animate-fade-in">
+          <CheckCircle className="w-5 h-5 text-emerald-600" />
           <span className="text-xs font-semibold">{toastMessage}</span>
-          <button onClick={() => setToastMessage(null)} className="text-slate-400 hover:text-white ml-2">
+          <button onClick={() => setToastMessage(null)} className="text-[#64748B] hover:text-[#0F172A] ml-2">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -57,31 +57,31 @@ export const LeadQueuePage: React.FC<LeadQueueProps> = ({ onNavigate }) => {
       {/* HEADER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+          <h1 className="text-2xl font-bold tracking-tight text-[#0B1F3A] flex items-center gap-2">
             Priority Lead Queue
-            <span className="px-2 py-0.5 rounded-full text-xs font-mono bg-[#7c5cfc]/15 text-[#9b8afb] border border-[#7c5cfc]/30">
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-mono bg-[#EAF2FF] text-[#155EEF] border border-[#155EEF]/20 font-semibold">
               {leadsWithAddress.length + needsHumanLeads.length} Action Items
             </span>
           </h1>
-          <p className="text-xs text-[#a7adc0] mt-1">
+          <p className="text-xs text-[#475569] mt-1">
             Dedicated triage workspace for high-intent realtor replies, captured addresses, and AI escalations.
           </p>
         </div>
 
         {/* SEARCH INPUT */}
         <div className="relative w-full md:w-72">
-          <Search className="w-4 h-4 text-[#737b91] absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-[#64748B] absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             placeholder="Search leads by name, address, brokerage..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-[#101323] border border-[#202641] focus:border-[#7c5cfc] rounded-xl pl-9 pr-8 py-2 text-xs text-white placeholder-[#737b91] focus:outline-none transition-all"
+            className="w-full bg-white border border-[#E2E8F0] focus:border-[#155EEF] rounded-xl pl-9 pr-8 py-2 text-xs text-[#0F172A] placeholder-[#94A3B8] focus:outline-none transition-all shadow-sm"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#737b91] hover:text-white"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#64748B] hover:text-[#0F172A]"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -90,30 +90,28 @@ export const LeadQueuePage: React.FC<LeadQueueProps> = ({ onNavigate }) => {
       </div>
 
       {/* TABS */}
-      <div className="flex border-b border-[#202641] space-x-4 overflow-x-auto no-scrollbar">
+      <div className="flex border-b border-[#E2E8F0] space-x-4 overflow-x-auto no-scrollbar">
         <button
           onClick={() => setActiveTab('address')}
-          className={`pb-3 text-xs font-bold border-b-2 flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
-            activeTab === 'address' ? 'border-[#7c5cfc] text-[#9b8afb]' : 'border-transparent text-[#737b91] hover:text-slate-200'
-          }`}
+          className={`pb-3 text-xs font-bold border-b-2 flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${activeTab === 'address' ? 'border-[#155EEF] text-[#155EEF]' : 'border-transparent text-[#64748B] hover:text-[#0F172A]'
+            }`}
         >
           <Building className="w-4 h-4" /> LEADS WITH ADDRESS ({leadsWithAddress.length})
         </button>
 
         <button
           onClick={() => setActiveTab('needs_human')}
-          className={`pb-3 text-xs font-bold border-b-2 flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
-            activeTab === 'needs_human' ? 'border-[#7c5cfc] text-[#9b8afb]' : 'border-transparent text-[#737b91] hover:text-slate-200'
-          }`}
+          className={`pb-3 text-xs font-bold border-b-2 flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${activeTab === 'needs_human' ? 'border-[#155EEF] text-[#155EEF]' : 'border-transparent text-[#64748B] hover:text-[#0F172A]'
+            }`}
         >
-          <Flame className="w-4 h-4 text-[#7c5cfc]" /> NEEDS HUMAN TAKEOVER ({needsHumanLeads.length})
+          <Flame className="w-4 h-4 text-[#155EEF]" /> NEEDS HUMAN TAKEOVER ({needsHumanLeads.length})
         </button>
       </div>
 
       {/* LEADS LIST CARDS */}
       <div className="space-y-4">
         {activeList.length === 0 ? (
-          <div className="text-center py-12 text-xs text-[#737b91] bg-[#101323]/50 rounded-2xl border border-[#202641]">
+          <div className="text-center py-12 text-xs text-[#64748B] bg-white rounded-2xl border border-[#E2E8F0]">
             No leads found matching your criteria.
           </div>
         ) : (
@@ -127,32 +125,32 @@ export const LeadQueuePage: React.FC<LeadQueueProps> = ({ onNavigate }) => {
               >
                 <div className="space-y-2 flex-1 w-full min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="w-7 h-7 rounded-lg font-bold text-xs flex items-center justify-center bg-[#101323] text-[#9b8afb] border border-[#202641] shrink-0">
+                    <span className="w-7 h-7 rounded-lg font-bold text-xs flex items-center justify-center bg-[#EAF2FF] text-[#155EEF] border border-[#155EEF]/20 shrink-0">
                       {conv.grade}
                     </span>
-                    <span className="font-bold text-white text-sm truncate">{conv.realtorName}</span>
-                    <span className="text-[#a7adc0] text-xs font-normal shrink-0">({conv.brokerage})</span>
-                    
+                    <span className="font-bold text-[#0F172A] text-sm truncate">{conv.realtorName}</span>
+                    <span className="text-[#475569] text-xs font-normal shrink-0">({conv.brokerage})</span>
+
                     {/* OWNER BADGE */}
                     {isAssigned ? (
-                      <span className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-[#35b77a]/15 text-[#35b77a] border border-[#35b77a]/30 flex items-center gap-1 shrink-0">
-                        <UserCheck className="w-3 h-3" /> Assigned to {conv.assignedOwnerName}
+                      <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1 shrink-0">
+                        <UserCheck className="w-3 h-3 text-emerald-600" /> Assigned to {conv.assignedOwnerName}
                       </span>
                     ) : (
-                      <span className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20 shrink-0">
+                      <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-amber-50 text-amber-700 border border-amber-200 shrink-0">
                         Unassigned
                       </span>
                     )}
 
-                    <span className="text-[10px] text-[#737b91] font-mono ml-auto md:ml-2 shrink-0">&bull; {conv.timestamp}</span>
+                    <span className="text-[10px] text-[#64748B] font-mono ml-auto md:ml-2 shrink-0">&bull; {conv.timestamp}</span>
                   </div>
 
-                  <p className="text-xs text-slate-300 bg-[#070811] p-3 rounded-xl border border-[#202641] break-words">
+                  <p className="text-xs text-[#1E293B] bg-[#F8FAFC] p-3 rounded-xl border border-[#E2E8F0] break-words italic">
                     "{conv.latestMessage}"
                   </p>
 
                   {conv.propertyCaptured && (
-                    <div className="flex flex-wrap items-center gap-2 text-xs text-[#35b77a] font-medium">
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-emerald-700 font-semibold">
                       <span>📍 {conv.propertyCaptured.address}, {conv.propertyCaptured.city}</span>
                       <span>&bull;</span>
                       <span>Asking: ${conv.propertyCaptured.askingPrice.toLocaleString()}</span>
@@ -161,7 +159,7 @@ export const LeadQueuePage: React.FC<LeadQueueProps> = ({ onNavigate }) => {
                 </div>
 
                 {/* ACTION BUTTONS */}
-                <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-start sm:justify-end pt-3 md:pt-0 border-t md:border-t-0 border-[#202641]">
+                <div className="flex flex-wrap items-center gap-2 w-full md:w-auto justify-start sm:justify-end pt-3 md:pt-0 border-t md:border-t-0 border-[#E2E8F0]">
                   {!isReadOnly && (
                     <>
                       {/* ADMIN / MANAGER REASSIGNMENT SELECTOR */}
@@ -175,16 +173,16 @@ export const LeadQueuePage: React.FC<LeadQueueProps> = ({ onNavigate }) => {
                                 handleClaim(conv.id, selectedUser.id, selectedUser.name);
                               }
                             }}
-                            className="w-full px-3 py-2 bg-[#101323] border border-[#202641] hover:border-[#7c5cfc]/40 text-slate-200 text-xs font-semibold rounded-xl transition-all appearance-none pr-8 cursor-pointer focus:outline-none focus:border-[#7c5cfc] truncate"
+                            className="w-full px-3 py-2 bg-white border border-[#E2E8F0] hover:border-[#155EEF]/40 text-[#0F172A] text-xs font-semibold rounded-xl transition-all appearance-none pr-8 cursor-pointer focus:outline-none focus:border-[#155EEF] truncate shadow-sm"
                           >
                             <option value="" disabled>Assign Owner...</option>
                             {users.map(u => (
-                              <option key={u.id} value={u.id} className="bg-[#101323] text-white">
+                              <option key={u.id} value={u.id} className="bg-white text-[#0F172A]">
                                 {u.name} ({u.role})
                               </option>
                             ))}
                           </select>
-                          <UserPlus className="w-3.5 h-3.5 text-[#9b8afb] absolute right-2.5 pointer-events-none" />
+                          <UserPlus className="w-3.5 h-3.5 text-[#155EEF] absolute right-2.5 pointer-events-none" />
                         </div>
                       )}
 
@@ -192,7 +190,7 @@ export const LeadQueuePage: React.FC<LeadQueueProps> = ({ onNavigate }) => {
                       {(!isAssigned || conv.assignedOwnerId !== currentUser.id) && (
                         <button
                           onClick={() => handleClaim(conv.id)}
-                          className="flex-1 sm:flex-initial px-3.5 py-2 bg-[#7c5cfc] hover:bg-[#6847e8] text-white text-xs font-bold rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
+                          className="flex-1 sm:flex-initial px-3.5 py-2 btn-executive-primary text-white text-xs font-bold rounded-xl transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
                         >
                           <UserCheck className="w-3.5 h-3.5" />
                           {isAssigned ? 'Reassign to Me' : 'Claim Lead'}
@@ -203,9 +201,9 @@ export const LeadQueuePage: React.FC<LeadQueueProps> = ({ onNavigate }) => {
 
                   <button
                     onClick={() => onNavigate('conversations', conv.id)}
-                    className="flex-1 sm:flex-initial px-3.5 py-2 bg-[#101323] border border-[#202641] hover:border-[#7c5cfc]/40 text-slate-200 text-xs font-semibold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap"
+                    className="flex-1 sm:flex-initial px-3.5 py-2 bg-white border border-[#E2E8F0] hover:border-[#155EEF]/40 text-[#0F172A] text-xs font-semibold rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer whitespace-nowrap shadow-sm"
                   >
-                    <MessageSquare className="w-3.5 h-3.5 text-[#9b8afb]" /> Open Thread
+                    <MessageSquare className="w-3.5 h-3.5 text-[#155EEF]" /> Open Thread
                   </button>
                 </div>
 

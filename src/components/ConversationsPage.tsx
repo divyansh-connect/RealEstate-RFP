@@ -79,13 +79,13 @@ export const ConversationsPage: React.FC = () => {
       {/* HEADER */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 flex-shrink-0">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white flex flex-wrap items-center gap-2">
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#0B1F3A] flex flex-wrap items-center gap-2">
             <span>Conversations Workspace</span>
-            <span className="px-2.5 py-0.5 rounded-full text-xs font-mono bg-[#7c5cfc]/15 text-[#9b8afb] border border-[#7c5cfc]/30 shrink-0 whitespace-nowrap">
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-[#EAF2FF] text-[#155EEF] border border-[#BFDBFE] shrink-0 whitespace-nowrap">
               {conversations.length} Active Dialogs
             </span>
           </h1>
-          <p className="text-xs text-[#a7adc0] mt-1">
+          <p className="text-xs text-[#64748B] mt-1">
             Real-time SMS dialogs, address extraction, AI takeover switches, and conversation qualification scoring.
           </p>
         </div>
@@ -93,7 +93,7 @@ export const ConversationsPage: React.FC = () => {
         {activeConv && activeConv.status === 'Needs Human' && !isReadOnly && (
           <button
             onClick={() => claimLead(activeConv.id)}
-            className="px-4 py-2 bg-[#7c5cfc] hover:bg-[#6847e8] text-white font-bold text-xs rounded-xl shadow-lg shadow-[#7c5cfc]/20 transition-all flex items-center justify-center gap-2 cursor-pointer self-start sm:self-auto shrink-0 whitespace-nowrap"
+            className="px-4 py-2 btn-executive-primary text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer self-start sm:self-auto shrink-0 whitespace-nowrap"
           >
             <Flame className="w-4 h-4" /> Claim & Take Over
           </button>
@@ -101,11 +101,11 @@ export const ConversationsPage: React.FC = () => {
       </div>
 
       {/* MOBILE SEGMENTED VIEW SWITCHER (VISIBLE ONLY ON MOBILE < LG) */}
-      <div className="lg:hidden flex items-center bg-[#070811] p-1 rounded-xl border border-[#202641]">
+      <div className="lg:hidden flex items-center bg-white p-1 rounded-xl border border-[#E2E8F0] shadow-xs">
         <button
           onClick={() => setMobileView('list')}
           className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
-            mobileView === 'list' ? 'bg-[#7c5cfc] text-white shadow-md' : 'text-[#a7adc0]'
+            mobileView === 'list' ? 'bg-[#155EEF] text-white shadow-xs' : 'text-[#64748B]'
           }`}
         >
           <MessageSquare className="w-3.5 h-3.5" /> Threads ({filteredConversations.length})
@@ -113,7 +113,7 @@ export const ConversationsPage: React.FC = () => {
         <button
           onClick={() => setMobileView('chat')}
           className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
-            mobileView === 'chat' ? 'bg-[#7c5cfc] text-white shadow-md' : 'text-[#a7adc0]'
+            mobileView === 'chat' ? 'bg-[#155EEF] text-white shadow-xs' : 'text-[#64748B]'
           }`}
         >
           <Send className="w-3.5 h-3.5" /> Chat
@@ -121,7 +121,7 @@ export const ConversationsPage: React.FC = () => {
         <button
           onClick={() => setMobileView('details')}
           className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
-            mobileView === 'details' ? 'bg-[#7c5cfc] text-white shadow-md' : 'text-[#a7adc0]'
+            mobileView === 'details' ? 'bg-[#155EEF] text-white shadow-xs' : 'text-[#64748B]'
           }`}
         >
           <Info className="w-3.5 h-3.5" /> Details
@@ -137,15 +137,15 @@ export const ConversationsPage: React.FC = () => {
         }`}>
           
           {/* List Search & Filters */}
-          <div className="p-3 border-b border-[#202641] space-y-2 bg-[#070811]">
+          <div className="p-3 border-b border-[#E2E8F0] space-y-2 bg-[#F5F8FC]">
             <div className="relative">
-              <Search className="w-3.5 h-3.5 text-[#737b91] absolute left-3 top-2.5" />
+              <Search className="w-3.5 h-3.5 text-[#64748B] absolute left-3 top-2.5" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search realtor or dialog..."
-                className="w-full pl-9 pr-3 py-1.5 bg-[#101323] border border-[#202641] rounded-xl text-xs text-[#f5f5f7] focus:outline-none focus:border-[#7c5cfc]"
+                className="w-full pl-9 pr-3 py-1.5 bg-white border border-[#E2E8F0] rounded-xl text-xs text-[#0F172A] focus:outline-none focus:border-[#155EEF]"
               />
             </div>
 
@@ -155,7 +155,7 @@ export const ConversationsPage: React.FC = () => {
                   key={cat}
                   onClick={() => setFilterCategory(cat)}
                   className={`px-2.5 py-1 rounded-lg font-bold uppercase tracking-wider whitespace-nowrap transition-colors ${
-                    filterCategory === cat ? 'bg-[#7c5cfc] text-white' : 'bg-[#101323] text-[#a7adc0] hover:text-white'
+                    filterCategory === cat ? 'bg-[#155EEF] text-white' : 'bg-white text-[#475569] hover:bg-[#EAF2FF] border border-[#E2E8F0]'
                   }`}
                 >
                   {cat}
@@ -165,7 +165,7 @@ export const ConversationsPage: React.FC = () => {
           </div>
 
           {/* List Items */}
-          <div className="flex-1 overflow-y-auto divide-y divide-[#202641]">
+          <div className="flex-1 overflow-y-auto divide-y divide-[#E2E8F0]">
             {filteredConversations.map((conv) => {
               const isSelected = activeConv?.id === conv.id;
 
@@ -177,26 +177,26 @@ export const ConversationsPage: React.FC = () => {
                     setMobileView('chat');
                   }}
                   className={`p-3.5 cursor-pointer transition-all ${
-                    isSelected ? 'bg-[#171c33] border-l-4 border-[#7c5cfc]' : 'hover:bg-[#171c33]/40'
+                    isSelected ? 'bg-[#EAF2FF] border-l-4 border-[#155EEF]' : 'hover:bg-[#F5F8FC]'
                   }`}
                 >
                   <div className="flex justify-between items-start mb-1">
-                    <span className="font-bold text-xs text-white flex items-center gap-1.5">
+                    <span className="font-bold text-xs text-[#0B1F3A] flex items-center gap-1.5">
                       {conv.realtorName}
                     </span>
-                    <span className="text-[10px] text-[#737b91] font-mono">{conv.timestamp}</span>
+                    <span className="text-[10px] text-[#64748B] font-mono">{conv.timestamp}</span>
                   </div>
 
-                  <div className="text-[11px] text-[#a7adc0] line-clamp-2 mb-2 font-light">
+                  <div className="text-[11px] text-[#475569] line-clamp-2 mb-2 font-light">
                     {conv.latestMessage}
                   </div>
 
                   <div className="flex items-center justify-between text-[10px]">
-                    <span className="px-2 py-0.5 rounded font-bold uppercase bg-[#101323] text-[#9b8afb] border border-[#202641]">
+                    <span className="px-2 py-0.5 rounded font-bold uppercase bg-[#EAF2FF] text-[#155EEF] border border-[#BFDBFE]">
                       Grade {conv.grade} ({conv.score})
                     </span>
 
-                    <span className="px-2 py-0.5 rounded font-mono bg-[#070811] text-[#a7adc0] border border-[#202641]">
+                    <span className="px-2 py-0.5 rounded font-mono bg-[#F5F8FC] text-[#475569] border border-[#E2E8F0]">
                       {conv.aiStatus}
                     </span>
                   </div>
@@ -214,30 +214,30 @@ export const ConversationsPage: React.FC = () => {
           
           {/* Thread Header */}
           {activeConv && (
-            <div className="p-3 border-b border-[#202641] bg-[#070811] flex flex-wrap items-center justify-between gap-2">
+            <div className="p-3 border-b border-[#E2E8F0] bg-[#F5F8FC] flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setMobileView('list')}
-                  className="lg:hidden p-1.5 rounded-lg bg-[#101323] border border-[#202641] text-[#a7adc0] hover:text-white"
+                  className="lg:hidden p-1.5 rounded-lg bg-white border border-[#E2E8F0] text-[#64748B] hover:text-[#0F172A]"
                   title="Back to Threads List"
                 >
                   <ArrowLeft className="w-4 h-4" />
                 </button>
 
                 <div>
-                  <div className="text-xs font-bold text-white leading-tight">{activeConv.realtorName}</div>
-                  <div className="text-[10px] text-[#a7adc0]">{activeConv.brokerage} &bull; {activeConv.realtorPhone}</div>
+                  <div className="text-xs font-bold text-[#0B1F3A] leading-tight">{activeConv.realtorName}</div>
+                  <div className="text-[10px] text-[#64748B]">{activeConv.brokerage} &bull; {activeConv.realtorPhone}</div>
                 </div>
               </div>
 
               {/* AI Controls & Mobile Info Button */}
               <div className="flex items-center gap-2">
                 {!isReadOnly && (
-                  <div className="flex items-center gap-1 bg-[#101323] p-1 rounded-xl border border-[#202641]">
+                  <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-[#E2E8F0]">
                     <button
                       onClick={() => toggleAiTakeover(activeConv.id, 'Active')}
                       className={`px-2 py-1 rounded-lg text-[10px] font-bold transition-all ${
-                        activeConv.aiStatus === 'Active' ? 'bg-[#7c5cfc] text-white shadow-md' : 'text-[#a7adc0] hover:text-white'
+                        activeConv.aiStatus === 'Active' ? 'bg-[#155EEF] text-white shadow-xs' : 'text-[#64748B] hover:text-[#0F172A]'
                       }`}
                     >
                       AI Active
@@ -245,7 +245,7 @@ export const ConversationsPage: React.FC = () => {
                     <button
                       onClick={() => toggleAiTakeover(activeConv.id, 'Human Takeover')}
                       className={`px-2 py-1 rounded-lg text-[10px] font-bold transition-all ${
-                        activeConv.aiStatus === 'Human Takeover' ? 'bg-[#5965d8] text-white shadow-md' : 'text-[#a7adc0] hover:text-white'
+                        activeConv.aiStatus === 'Human Takeover' ? 'bg-[#0B1F3A] text-white shadow-xs' : 'text-[#64748B] hover:text-[#0F172A]'
                       }`}
                     >
                       Human
@@ -253,7 +253,7 @@ export const ConversationsPage: React.FC = () => {
                     <button
                       onClick={() => toggleAiTakeover(activeConv.id, 'AI Off')}
                       className={`px-2 py-1 rounded-lg text-[10px] font-bold transition-all ${
-                        activeConv.aiStatus === 'AI Off' ? 'bg-[#d05a72] text-white shadow-md' : 'text-[#a7adc0] hover:text-white'
+                        activeConv.aiStatus === 'AI Off' ? 'bg-[#E11D48] text-white shadow-xs' : 'text-[#64748B] hover:text-[#0F172A]'
                       }`}
                     >
                       Off
@@ -263,7 +263,7 @@ export const ConversationsPage: React.FC = () => {
 
                 <button
                   onClick={() => setMobileView('details')}
-                  className="lg:hidden p-1.5 rounded-lg bg-[#101323] border border-[#202641] text-[#9b8afb] hover:text-white"
+                  className="lg:hidden p-1.5 rounded-lg bg-white border border-[#E2E8F0] text-[#155EEF] hover:text-[#0B1F3A]"
                   title="View Qualification Details"
                 >
                   <Info className="w-4 h-4" />
@@ -273,16 +273,16 @@ export const ConversationsPage: React.FC = () => {
           )}
 
           {/* Messages Feed */}
-          <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-[#070811]/60">
+          <div className="flex-1 p-4 overflow-y-auto space-y-3 bg-[#F7F9FC]">
             {activeConv?.messages.map((m) => {
               const isRealtor = m.sender === 'realtor';
               const isAi = m.sender === 'ai';
 
               return (
                 <div key={m.id} className={`flex flex-col ${isRealtor ? 'items-start' : 'items-end'}`}>
-                  <div className="flex items-center gap-1.5 mb-1 text-[9px] text-[#737b91]">
-                    {isAi && <Bot className="w-3 h-3 text-[#a855f7]" />}
-                    {!isRealtor && !isAi && <User className="w-3 h-3 text-[#7c5cfc]" />}
+                  <div className="flex items-center gap-1.5 mb-1 text-[9px] text-[#64748B]">
+                    {isAi && <Bot className="w-3 h-3 text-[#155EEF]" />}
+                    {!isRealtor && !isAi && <User className="w-3 h-3 text-[#0B1F3A]" />}
                     <span className="font-bold">
                       {isRealtor ? activeConv.realtorName : isAi ? 'Apex AI Agent' : 'Human Specialist'}
                     </span>
@@ -290,9 +290,9 @@ export const ConversationsPage: React.FC = () => {
                   </div>
 
                   <div className={`p-3 rounded-2xl max-w-[85%] text-xs leading-relaxed ${
-                    isRealtor ? 'bg-[#101323] border border-[#202641] text-[#f5f5f7] rounded-tl-none' :
-                    isAi ? 'bg-[#7c5cfc]/15 border border-[#7c5cfc]/30 text-[#f5f5f7] rounded-tr-none' :
-                    'bg-[#5965d8]/20 border border-[#5965d8]/40 text-[#f5f5f7] rounded-tr-none font-medium'
+                    isRealtor ? 'bg-white border border-[#E2E8F0] text-[#0F172A] rounded-tl-none shadow-xs' :
+                    isAi ? 'bg-[#EAF2FF] border border-[#BFDBFE] text-[#0B1F3A] rounded-tr-none shadow-xs font-medium' :
+                    'bg-[#155EEF] text-white rounded-tr-none font-medium shadow-xs'
                   }`}>
                     {m.text}
                   </div>
@@ -302,7 +302,7 @@ export const ConversationsPage: React.FC = () => {
           </div>
 
           {/* Reply Composer */}
-          <div className="p-3 border-t border-[#202641] bg-[#070811]">
+          <div className="p-3 border-t border-[#E2E8F0] bg-white">
             <form onSubmit={handleSendMessage} className="flex gap-2">
               <input
                 type="text"
@@ -310,12 +310,12 @@ export const ConversationsPage: React.FC = () => {
                 value={messageInput}
                 onChange={(e) => setMessageInput(e.target.value)}
                 placeholder={isReadOnly ? 'Read-only role cannot send messages' : 'Type response to realtor...'}
-                className="flex-1 px-3.5 py-2 bg-[#101323] border border-[#202641] rounded-xl text-xs text-white placeholder-[#737b91] focus:outline-none focus:border-[#7c5cfc]"
+                className="flex-1 px-3.5 py-2 bg-[#F5F8FC] border border-[#E2E8F0] rounded-xl text-xs text-[#0F172A] placeholder-[#64748B] focus:outline-none focus:border-[#155EEF]"
               />
               <button
                 type="submit"
                 disabled={isReadOnly || !messageInput.trim()}
-                className="px-4 py-2 bg-[#7c5cfc] hover:bg-[#6847e8] disabled:opacity-50 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center gap-1 cursor-pointer"
+                className="px-4 py-2 btn-executive-primary disabled:opacity-50 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center gap-1 cursor-pointer"
               >
                 <Send className="w-3.5 h-3.5" /> Send
               </button>
@@ -332,27 +332,27 @@ export const ConversationsPage: React.FC = () => {
           {activeConv && (
             <>
               <div>
-                <div className="lg:hidden flex items-center justify-between pb-3 mb-2 border-b border-[#202641]">
+                <div className="lg:hidden flex items-center justify-between pb-3 mb-2 border-b border-[#E2E8F0]">
                   <button
                     onClick={() => setMobileView('chat')}
-                    className="flex items-center gap-1 text-xs text-[#9b8afb] font-bold"
+                    className="flex items-center gap-1 text-xs text-[#155EEF] font-bold"
                   >
                     <ArrowLeft className="w-4 h-4" /> Back to Chat
                   </button>
-                  <span className="text-xs font-bold text-white uppercase">Qualification Panel</span>
+                  <span className="text-xs font-bold text-[#0B1F3A] uppercase">Qualification Panel</span>
                 </div>
 
-                <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-3 flex items-center justify-between">
+                <h3 className="text-xs font-bold text-[#0B1F3A] uppercase tracking-wider mb-3 flex items-center justify-between">
                   Thread Classification
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#101323] text-[#9b8afb] border border-[#202641]">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-[#EAF2FF] text-[#155EEF] border border-[#BFDBFE]">
                     {activeConv.classification}
                   </span>
                 </h3>
 
                 {/* Grade & Score Box */}
-                <div className="p-3.5 rounded-xl bg-[#070811] border border-[#202641] mb-4">
+                <div className="p-3.5 rounded-xl bg-[#F5F8FC] border border-[#E2E8F0] mb-4">
                   <div className="flex justify-between items-center mb-1">
-                    <span className="text-[10px] text-[#737b91] uppercase font-bold">Grade Rating</span>
+                    <span className="text-[10px] text-[#64748B] uppercase font-bold">Grade Rating</span>
                     {isAdmin && (
                       <button
                         onClick={() => {
@@ -360,42 +360,42 @@ export const ConversationsPage: React.FC = () => {
                           setOverrideScoreVal(activeConv.score);
                           setShowOverrideModal(true);
                         }}
-                        className="text-[10px] text-[#9b8afb] hover:underline"
+                        className="text-[10px] text-[#155EEF] font-bold hover:underline"
                       >
                         Override Grade
                       </button>
                     )}
                   </div>
-                  <div className="text-2xl font-bold font-mono text-[#9b8afb]">
-                    Grade {activeConv.grade} <span className="text-xs text-[#737b91] font-normal">({activeConv.score}/100)</span>
+                  <div className="text-2xl font-extrabold font-mono text-[#155EEF]">
+                    Grade {activeConv.grade} <span className="text-xs text-[#64748B] font-normal">({activeConv.score}/100)</span>
                   </div>
-                  <p className="text-[11px] text-[#a7adc0] mt-1 leading-snug">
+                  <p className="text-[11px] text-[#475569] mt-1 leading-snug">
                     {activeConv.gradeReason}
                   </p>
                 </div>
 
                 {/* Property Captured Box */}
                 {activeConv.propertyCaptured ? (
-                  <div className="p-3.5 rounded-xl bg-[#070811] border border-[#7c5cfc]/30 text-xs">
-                    <div className="flex items-center gap-1.5 text-[#35b77a] font-bold mb-2">
+                  <div className="p-3.5 rounded-xl bg-[#EAF2FF] border border-[#BFDBFE] text-xs">
+                    <div className="flex items-center gap-1.5 text-[#16A34A] font-bold mb-2">
                       <Building className="w-4 h-4" /> Captured Opportunity
                     </div>
-                    <div className="font-bold text-white">{activeConv.propertyCaptured.address}</div>
-                    <div className="text-[11px] text-[#a7adc0] mb-2">{activeConv.propertyCaptured.city}, {activeConv.propertyCaptured.state}</div>
+                    <div className="font-bold text-[#0B1F3A]">{activeConv.propertyCaptured.address}</div>
+                    <div className="text-[11px] text-[#475569] mb-2">{activeConv.propertyCaptured.city}, {activeConv.propertyCaptured.state}</div>
 
                     <div className="space-y-1 text-[11px]">
-                      <div className="flex justify-between text-[#a7adc0]">
+                      <div className="flex justify-between text-[#475569]">
                         <span>Asking Price:</span>
-                        <strong className="text-white">${activeConv.propertyCaptured.askingPrice.toLocaleString()}</strong>
+                        <strong className="text-[#0B1F3A]">${activeConv.propertyCaptured.askingPrice.toLocaleString()}</strong>
                       </div>
-                      <div className="flex justify-between text-[#a7adc0]">
+                      <div className="flex justify-between text-[#475569]">
                         <span>Timeline:</span>
-                        <strong className="text-[#9b8afb]">{activeConv.propertyCaptured.timeline}</strong>
+                        <strong className="text-[#155EEF]">{activeConv.propertyCaptured.timeline}</strong>
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <div className="p-3 rounded-xl bg-[#070811] border border-[#202641] text-[11px] text-[#737b91] text-center">
+                  <div className="p-3 rounded-xl bg-[#F5F8FC] border border-[#E2E8F0] text-[11px] text-[#64748B] text-center">
                     No property address captured in thread yet.
                   </div>
                 )}
@@ -409,21 +409,21 @@ export const ConversationsPage: React.FC = () => {
 
       {/* MANUAL GRADE OVERRIDE MODAL */}
       {showOverrideModal && isAdmin && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <div className="executive-panel w-full max-w-md rounded-2xl p-6 relative">
-            <button onClick={() => setShowOverrideModal(false)} className="absolute top-5 right-5 text-[#737b91] hover:text-white">
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="executive-panel w-full max-w-md rounded-2xl p-6 relative bg-white shadow-2xl">
+            <button onClick={() => setShowOverrideModal(false)} className="absolute top-5 right-5 text-[#64748B] hover:text-[#0F172A]">
               <X className="w-5 h-5" />
             </button>
 
-            <h3 className="text-lg font-bold text-white mb-4">Manual Grade Override</h3>
+            <h3 className="text-lg font-bold text-[#0B1F3A] mb-4">Manual Grade Override</h3>
             
             <form onSubmit={handleGradeOverrideSubmit} className="space-y-4 text-xs">
               <div>
-                <label className="block text-[#a7adc0] font-semibold mb-1">New Grade</label>
+                <label className="block text-[#475569] font-semibold mb-1">New Grade</label>
                 <select
                   value={overrideGradeVal}
                   onChange={(e) => setOverrideGradeVal(e.target.value as Grade)}
-                  className="w-full p-2.5 bg-[#070811] border border-[#202641] rounded-xl text-white focus:outline-none"
+                  className="w-full p-2.5 bg-[#F5F8FC] border border-[#E2E8F0] rounded-xl text-[#0F172A] focus:outline-none"
                 >
                   <option value="A">Grade A (Hot Lead)</option>
                   <option value="B">Grade B (Moderate)</option>
@@ -433,31 +433,31 @@ export const ConversationsPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[#a7adc0] font-semibold mb-1">Score (0-100)</label>
+                <label className="block text-[#475569] font-semibold mb-1">Score (0-100)</label>
                 <input
                   type="number"
                   min="0"
                   max="100"
                   value={overrideScoreVal}
                   onChange={(e) => setOverrideScoreVal(Number(e.target.value))}
-                  className="w-full p-2.5 bg-[#070811] border border-[#202641] rounded-xl text-white focus:outline-none"
+                  className="w-full p-2.5 bg-[#F5F8FC] border border-[#E2E8F0] rounded-xl text-[#0F172A] focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-[#a7adc0] font-semibold mb-1">Reason / Justification</label>
+                <label className="block text-[#475569] font-semibold mb-1">Reason / Justification</label>
                 <textarea
                   rows={3}
                   required
                   value={overrideReason}
                   onChange={(e) => setOverrideReason(e.target.value)}
-                  className="w-full p-2.5 bg-[#070811] border border-[#202641] rounded-xl text-white focus:outline-none"
+                  className="w-full p-2.5 bg-[#F5F8FC] border border-[#E2E8F0] rounded-xl text-[#0F172A] focus:outline-none"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full py-3 bg-[#7c5cfc] hover:bg-[#6847e8] text-white font-bold rounded-xl"
+                className="w-full py-3 btn-executive-primary text-white font-bold rounded-xl transition-colors cursor-pointer"
               >
                 Apply Grade Override
               </button>

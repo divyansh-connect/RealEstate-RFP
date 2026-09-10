@@ -35,21 +35,21 @@ export const DashboardPage: React.FC<DashboardProps> = ({ onNavigate }) => {
     <div className="space-y-8 max-w-7xl mx-auto pb-12">
       
       {/* Welcome Executive Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-[#202641]">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-[#E2EAF5] relative">
         <div>
           <div className="flex flex-wrap items-center gap-2 mb-1">
-            <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded bg-[#7c5cfc]/15 text-[#9b8afb] border border-[#7c5cfc]/30 uppercase shrink-0">
+            <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full bg-[#EAF2FF] text-[#155EEF] border border-[#BFDBFE] uppercase shrink-0 shadow-xs">
               ROLE: {currentUser.role.replace('_', ' ')}
             </span>
-            <span className="text-xs text-[#a7adc0] font-medium">Dallas-Fort Worth Acquisitions Desk</span>
+            <span className="text-xs text-[#475569] font-semibold">Dallas-Fort Worth Acquisitions Desk</span>
           </div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#f5f5f7]">
+          <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-[#0B1F3A]">
             {isAgent ? `Acquisitions Workbench — ${currentUser.name}` :
              isManager ? 'Acquisitions Workload & Team Telemetry' :
              isReadOnly ? 'Executive Investment Overview' :
              'Executive Acquisition Dashboard'}
           </h1>
-          <p className="text-xs text-[#a7adc0] mt-1">
+          <p className="text-xs text-[#64748B] mt-1">
             Real-time telemetry on realtor outreach, AI conversation grades, and high-probability deals.
           </p>
         </div>
@@ -57,13 +57,13 @@ export const DashboardPage: React.FC<DashboardProps> = ({ onNavigate }) => {
         <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={() => onNavigate('contacts')}
-            className="flex-1 sm:flex-initial px-4 py-2 bg-[#12162a] border border-[#202641] hover:border-[#7c5cfc]/40 text-[#f5f5f7] text-xs font-semibold rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
+            className="flex-1 sm:flex-initial px-4 py-2.5 bg-white border border-[#CBD5E1] hover:border-[#155EEF] hover:bg-[#F0F6FF] text-[#0B1F3A] text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap shadow-xs"
           >
-            <Users className="w-4 h-4 text-[#7c5cfc]" /> Contacts Directory
+            <Users className="w-4 h-4 text-[#155EEF]" /> Contacts Directory
           </button>
           <button
             onClick={() => onNavigate('deals')}
-            className="flex-1 sm:flex-initial px-4 py-2 bg-[#7c5cfc] hover:bg-[#6847e8] text-white text-xs font-bold rounded-xl shadow-lg shadow-[#7c5cfc]/20 transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
+            className="btn-executive-primary flex-1 sm:flex-initial px-4 py-2.5 text-white text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap"
           >
             <Building className="w-4 h-4" /> Deals Workspace
           </button>
@@ -74,76 +74,80 @@ export const DashboardPage: React.FC<DashboardProps> = ({ onNavigate }) => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
         {/* Contact Metric */}
-        <div className="executive-panel rounded-2xl p-5">
+        <div className="executive-panel executive-panel-hover rounded-2xl p-5 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-[#155EEF]/10 to-transparent rounded-bl-full pointer-events-none" />
           <div className="flex justify-between items-start mb-3">
-            <div className="p-2.5 rounded-xl bg-[#101323] border border-[#202641] text-[#a7adc0]">
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-[#EAF2FF] to-[#DBEAFE] border border-[#BFDBFE] text-[#155EEF] shadow-xs">
               <Users className="w-5 h-5" />
             </div>
-            <span className="text-[10px] font-mono text-[#737b91]">
+            <span className="text-[10px] font-mono font-bold text-[#64748B] uppercase tracking-wider">
               Metrics
             </span>
           </div>
-          <div className="text-2xl font-bold text-[#f5f5f7] tracking-tight">{totalContacts}</div>
-          <div className="text-xs font-semibold text-[#a7adc0] mt-0.5">Total Realtor Contacts</div>
-          <div className="flex items-center gap-3 mt-3 pt-3 border-t border-[#202641] text-[11px] text-[#737b91]">
-            <span><strong className="text-[#35b77a]">{activeOutreach}</strong> Active</span>
+          <div className="text-3xl font-extrabold text-[#0B1F3A] font-mono tracking-tight">{totalContacts}</div>
+          <div className="text-xs font-bold text-[#475569] mt-0.5">Total Realtor Contacts</div>
+          <div className="flex items-center gap-3 mt-3 pt-3 border-t border-[#E2EAF5] text-[11px] text-[#64748B]">
+            <span><strong className="text-[#16A34A]">{activeOutreach}</strong> Active</span>
             <span>&bull;</span>
-            <span><strong className="text-[#737b91]">{optedOut}</strong> Opt-out</span>
+            <span><strong className="text-[#64748B]">{optedOut}</strong> Opt-out</span>
           </div>
         </div>
 
         {/* Outreach Metric */}
-        <div className="executive-panel rounded-2xl p-5">
+        <div className="executive-panel executive-panel-hover rounded-2xl p-5 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-[#155EEF]/10 to-transparent rounded-bl-full pointer-events-none" />
           <div className="flex justify-between items-start mb-3">
-            <div className="p-2.5 rounded-xl bg-[#101323] border border-[#202641] text-[#a7adc0]">
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-[#EAF2FF] to-[#DBEAFE] border border-[#BFDBFE] text-[#155EEF] shadow-xs">
               <Send className="w-5 h-5" />
             </div>
-            <span className="text-[10px] font-mono text-[#737b91]">
+            <span className="text-[10px] font-mono font-bold text-[#64748B] uppercase tracking-wider">
               Activity
             </span>
           </div>
-          <div className="text-2xl font-bold text-[#f5f5f7] tracking-tight">1,482</div>
-          <div className="text-xs font-semibold text-[#a7adc0] mt-0.5">Outreach Dispatched (24h)</div>
-          <div className="flex items-center gap-3 mt-3 pt-3 border-t border-[#202641] text-[11px] text-[#737b91]">
-            <span>Reply Rate: <strong className="text-[#35b77a]">18.4%</strong></span>
+          <div className="text-3xl font-extrabold text-[#0B1F3A] font-mono tracking-tight">1,482</div>
+          <div className="text-xs font-bold text-[#475569] mt-0.5">Outreach Dispatched (24h)</div>
+          <div className="flex items-center gap-3 mt-3 pt-3 border-t border-[#E2EAF5] text-[11px] text-[#64748B]">
+            <span>Reply Rate: <strong className="text-[#16A34A]">18.4%</strong></span>
             <span>&bull;</span>
             <span>SMS: 84%</span>
           </div>
         </div>
 
         {/* Conversation Metric */}
-        <div className="executive-panel rounded-2xl p-5">
+        <div className="executive-panel executive-panel-hover rounded-2xl p-5 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-[#155EEF]/10 to-transparent rounded-bl-full pointer-events-none" />
           <div className="flex justify-between items-start mb-3">
-            <div className="p-2.5 rounded-xl bg-[#7c5cfc]/15 text-[#9b8afb] border border-[#7c5cfc]/30">
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-[#EAF2FF] to-[#DBEAFE] border border-[#BFDBFE] text-[#155EEF] shadow-xs">
               <MessageSquare className="w-5 h-5" />
             </div>
-            <span className="text-[10px] font-mono text-[#737b91]">
+            <span className="text-[10px] font-mono font-bold text-[#64748B] uppercase tracking-wider">
               Inbox
             </span>
           </div>
-          <div className="text-2xl font-bold text-[#f5f5f7] tracking-tight">{conversations.length}</div>
-          <div className="text-xs font-semibold text-[#a7adc0] mt-0.5">Active Dialog Threads</div>
-          <div className="flex items-center gap-3 mt-3 pt-3 border-t border-[#202641] text-[11px] text-[#737b91]">
-            <span><strong className="text-[#9b8afb]">{needsHumanCount}</strong> Needs Human</span>
+          <div className="text-3xl font-extrabold text-[#0B1F3A] font-mono tracking-tight">{conversations.length}</div>
+          <div className="text-xs font-bold text-[#475569] mt-0.5">Active Dialog Threads</div>
+          <div className="flex items-center gap-3 mt-3 pt-3 border-t border-[#E2EAF5] text-[11px] text-[#64748B]">
+            <span><strong className="text-[#155EEF]">{needsHumanCount}</strong> Needs Human</span>
             <span>&bull;</span>
-            <span><strong className="text-[#35b77a]">{leadsWithAddressCount}</strong> Addresses</span>
+            <span><strong className="text-[#16A34A]">{leadsWithAddressCount}</strong> Addresses</span>
           </div>
         </div>
 
         {/* Deals Metric */}
-        <div className="executive-panel rounded-2xl p-5">
+        <div className="executive-panel executive-panel-hover rounded-2xl p-5 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-[#155EEF]/10 to-transparent rounded-bl-full pointer-events-none" />
           <div className="flex justify-between items-start mb-3">
-            <div className="p-2.5 rounded-xl bg-[#101323] border border-[#202641] text-[#a7adc0]">
+            <div className="p-2.5 rounded-xl bg-gradient-to-br from-[#EAF2FF] to-[#DBEAFE] border border-[#BFDBFE] text-[#155EEF] shadow-xs">
               <Building className="w-5 h-5" />
             </div>
-            <span className="text-[10px] font-mono text-[#737b91]">
+            <span className="text-[10px] font-mono font-bold text-[#64748B] uppercase tracking-wider">
               Pipeline
             </span>
           </div>
-          <div className="text-2xl font-bold text-[#f5f5f7] tracking-tight">${(activePipelineValue / 1000000).toFixed(2)}M</div>
-          <div className="text-xs font-semibold text-[#a7adc0] mt-0.5">Active Deals Volume</div>
-          <div className="flex items-center gap-3 mt-3 pt-3 border-t border-[#202641] text-[11px] text-[#737b91]">
-            <span><strong className="text-[#35b77a]">{totalDealsCount}</strong> Active Deals</span>
+          <div className="text-3xl font-extrabold text-[#0B1F3A] font-mono tracking-tight">${(activePipelineValue / 1000000).toFixed(2)}M</div>
+          <div className="text-xs font-bold text-[#475569] mt-0.5">Active Deals Volume</div>
+          <div className="flex items-center gap-3 mt-3 pt-3 border-t border-[#E2EAF5] text-[11px] text-[#64748B]">
+            <span><strong className="text-[#16A34A]">{totalDealsCount}</strong> Active Deals</span>
           </div>
         </div>
 
@@ -153,43 +157,44 @@ export const DashboardPage: React.FC<DashboardProps> = ({ onNavigate }) => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Grade Distribution Breakdown - AI Qualification Card */}
-        <div className="executive-panel rounded-2xl p-5 sm:p-6 lg:col-span-1 flex flex-col justify-between relative overflow-hidden border-[#7c5cfc]/30 shadow-[0_0_20px_rgba(124,92,252,0.08)]">
+        <div className="executive-panel rounded-2xl p-5 sm:p-6 lg:col-span-1 flex flex-col justify-between relative overflow-hidden border-[#BFDBFE]">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[#155EEF]/10 to-transparent rounded-bl-full pointer-events-none" />
           <div>
             <div className="flex items-center justify-between gap-2 mb-4">
               <div className="flex items-center gap-2 min-w-0">
-                <div className="p-1.5 rounded-lg bg-[#7c5cfc]/20 text-[#a855f7] border border-[#7c5cfc]/30 shrink-0">
+                <div className="p-1.5 rounded-lg bg-[#EAF2FF] text-[#155EEF] border border-[#BFDBFE] shrink-0 shadow-xs">
                   <Bot className="w-4 h-4" />
                 </div>
-                <h3 className="text-[11px] sm:text-xs font-bold text-white uppercase tracking-wider truncate">AI Qualification Telemetry</h3>
+                <h3 className="text-[11px] sm:text-xs font-extrabold text-[#0B1F3A] uppercase tracking-wider truncate">AI Qualification Telemetry</h3>
               </div>
-              <button onClick={() => onNavigate('conversations')} className="text-xs text-[#9b8afb] hover:underline shrink-0 whitespace-nowrap">Details &rarr;</button>
+              <button onClick={() => onNavigate('conversations')} className="text-xs text-[#155EEF] font-extrabold hover:underline shrink-0 whitespace-nowrap">Details &rarr;</button>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 sm:gap-2 mb-6 text-center">
-              <div className="p-2 sm:p-2.5 rounded-xl bg-[#070811] border border-[#35b77a]/30">
-                <div className="text-base sm:text-lg font-bold text-[#35b77a]">{gradeACount}</div>
-                <div className="text-[9px] sm:text-[10px] uppercase font-bold text-[#737b91] mt-0.5 whitespace-nowrap">Grade A</div>
+              <div className="p-2 sm:p-2.5 rounded-xl bg-[#F8FBFF] border border-[#16A34A]/30 shadow-xs">
+                <div className="text-base sm:text-lg font-mono font-bold text-[#16A34A]">{gradeACount}</div>
+                <div className="text-[9px] sm:text-[10px] uppercase font-bold text-[#64748B] mt-0.5 whitespace-nowrap">Grade A</div>
               </div>
-              <div className="p-2 sm:p-2.5 rounded-xl bg-[#070811] border border-[#5965d8]/30">
-                <div className="text-base sm:text-lg font-bold text-[#5965d8]">{gradeBCount}</div>
-                <div className="text-[9px] sm:text-[10px] uppercase font-bold text-[#737b91] mt-0.5 whitespace-nowrap">Grade B</div>
+              <div className="p-2 sm:p-2.5 rounded-xl bg-[#F8FBFF] border border-[#155EEF]/30 shadow-xs">
+                <div className="text-base sm:text-lg font-mono font-bold text-[#155EEF]">{gradeBCount}</div>
+                <div className="text-[9px] sm:text-[10px] uppercase font-bold text-[#64748B] mt-0.5 whitespace-nowrap">Grade B</div>
               </div>
-              <div className="p-2 sm:p-2.5 rounded-xl bg-[#070811] border border-[#9b8afb]/30">
-                <div className="text-base sm:text-lg font-bold text-[#9b8afb]">{gradeCCount}</div>
-                <div className="text-[9px] sm:text-[10px] uppercase font-bold text-[#737b91] mt-0.5 whitespace-nowrap">Grade C</div>
+              <div className="p-2 sm:p-2.5 rounded-xl bg-[#F8FBFF] border border-[#2563EB]/30 shadow-xs">
+                <div className="text-base sm:text-lg font-mono font-bold text-[#2563EB]">{gradeCCount}</div>
+                <div className="text-[9px] sm:text-[10px] uppercase font-bold text-[#64748B] mt-0.5 whitespace-nowrap">Grade C</div>
               </div>
-              <div className="p-2 sm:p-2.5 rounded-xl bg-[#070811] border border-[#d05a72]/30">
-                <div className="text-base sm:text-lg font-bold text-[#d05a72]">{gradeDCount}</div>
-                <div className="text-[9px] sm:text-[10px] uppercase font-bold text-[#737b91] mt-0.5 whitespace-nowrap">Grade D</div>
+              <div className="p-2 sm:p-2.5 rounded-xl bg-[#F8FBFF] border border-[#E11D48]/30 shadow-xs">
+                <div className="text-base sm:text-lg font-mono font-bold text-[#E11D48]">{gradeDCount}</div>
+                <div className="text-[9px] sm:text-[10px] uppercase font-bold text-[#64748B] mt-0.5 whitespace-nowrap">Grade D</div>
               </div>
             </div>
           </div>
 
-          <div className="p-3 sm:p-3.5 rounded-xl bg-[#070811] border border-[#7c5cfc]/40 text-xs text-[#f5f5f7] flex items-center justify-between shadow-[inset_0_0_12px_rgba(124,92,252,0.1)] gap-2">
-            <span className="flex items-center gap-2 truncate">
-              <Sparkles className="w-4 h-4 text-[#a855f7] shrink-0" /> <span className="truncate">AI High-Intent Threads</span>
+          <div className="p-3 sm:p-3.5 rounded-xl bg-[#EAF2FF] border border-[#BFDBFE] text-xs text-[#0B1F3A] flex items-center justify-between gap-2 shadow-xs">
+            <span className="flex items-center gap-2 truncate font-semibold">
+              <Sparkles className="w-4 h-4 text-[#155EEF] shrink-0" /> <span className="truncate">AI High-Intent Threads</span>
             </span>
-            <span className="font-bold font-mono text-[#9b8afb] text-xs sm:text-sm shrink-0">{gradeACount + gradeBCount} Qualified</span>
+            <span className="font-extrabold font-mono text-[#155EEF] text-xs sm:text-sm shrink-0">{gradeACount + gradeBCount} Qualified</span>
           </div>
         </div>
 
@@ -197,13 +202,13 @@ export const DashboardPage: React.FC<DashboardProps> = ({ onNavigate }) => {
         <div className="executive-panel rounded-2xl p-5 sm:p-6 lg:col-span-2">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
             <div className="flex items-center gap-2">
-              <h3 className="text-xs font-bold text-white uppercase tracking-wider">Priority Attention Queue</h3>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#7c5cfc] text-white shrink-0">
+              <h3 className="text-xs font-extrabold text-[#0B1F3A] uppercase tracking-wider">Priority Attention Queue</h3>
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#155EEF] text-white shrink-0 shadow-xs">
                 {needsHumanCount + leadsWithAddressCount} Items
               </span>
             </div>
             {!isReadOnly && (
-              <button onClick={() => onNavigate('leadqueue')} className="text-xs text-[#9b8afb] hover:underline self-start sm:self-auto">
+              <button onClick={() => onNavigate('leadqueue')} className="text-xs text-[#155EEF] font-extrabold hover:underline self-start sm:self-auto">
                 Open Lead Queue &rarr;
               </button>
             )}
@@ -214,25 +219,25 @@ export const DashboardPage: React.FC<DashboardProps> = ({ onNavigate }) => {
               <div
                 key={conv.id}
                 onClick={() => onNavigate('conversations', conv.id)}
-                className="p-3.5 rounded-xl bg-[#070811] border border-[#202641] hover:border-[#7c5cfc]/40 transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 group"
+                className="p-3.5 rounded-xl bg-[#F8FBFF] border border-[#E2EAF5] hover:border-[#155EEF] hover:bg-[#F0F6FF] transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 group shadow-xs hover:shadow-md"
               >
                 <div className="flex items-start sm:items-center gap-3 min-w-0 flex-1">
-                  <div className="w-8 h-8 rounded-lg bg-[#101323] text-[#f5f5f7] font-bold text-xs flex items-center justify-center border border-[#202641] shrink-0 mt-0.5 sm:mt-0">
+                  <div className="w-8 h-8 rounded-lg bg-white text-[#155EEF] font-extrabold text-xs flex items-center justify-center border border-[#BFDBFE] shrink-0 mt-0.5 sm:mt-0 shadow-xs">
                     {conv.grade}
                   </div>
                   <div className="min-w-0 flex-1 space-y-0.5">
-                    <div className="text-xs font-bold text-white flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
+                    <div className="text-xs font-bold text-[#0B1F3A] flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
                       <span>{conv.realtorName}</span>
-                      <span className="text-[#737b91] hidden sm:inline">&bull;</span>
-                      <span className="text-[#a7adc0] font-normal text-[11px] sm:text-xs">({conv.brokerage})</span>
+                      <span className="text-[#64748B] hidden sm:inline">&bull;</span>
+                      <span className="text-[#475569] font-normal text-[11px] sm:text-xs">({conv.brokerage})</span>
                     </div>
-                    <div className="text-[11px] text-[#a7adc0] truncate">
+                    <div className="text-[11px] text-[#475569] truncate italic">
                       "{conv.latestMessage}"
                     </div>
                   </div>
                 </div>
 
-                <span className="self-start sm:self-center shrink-0 px-2.5 py-1 rounded text-[10px] font-bold uppercase tracking-wider bg-[#101323] text-[#9b8afb] border border-[#202641] whitespace-nowrap">
+                <span className="self-start sm:self-center shrink-0 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#EAF2FF] text-[#155EEF] border border-[#BFDBFE] whitespace-nowrap shadow-xs">
                   {conv.status}
                 </span>
               </div>

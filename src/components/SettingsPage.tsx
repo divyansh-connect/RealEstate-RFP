@@ -70,22 +70,22 @@ export const SettingsPage: React.FC = () => {
       
       {/* HEADER */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+        <h1 className="text-2xl font-bold tracking-tight text-[#0B1F3A] flex items-center gap-2">
           CRM & AI Engine Settings
         </h1>
-        <p className="text-xs text-[#a7adc0] mt-1">
+        <p className="text-xs text-[#475569] mt-1">
           Configure outreach sending throttles, AI conversation fine-tuning, qualification grade weights, and user RBAC.
         </p>
       </div>
 
       {/* TAB NAVIGATION - RESTRICTED BASED ON ROLE */}
-      <div className="flex border-b border-[#202641] space-x-6 overflow-x-auto">
+      <div className="flex border-b border-[#E2E8F0] space-x-6 overflow-x-auto">
         {visibleTabs.map((t) => (
           <button
             key={t.id}
             onClick={() => setActiveTab(t.id)}
             className={`pb-3 text-xs font-bold border-b-2 flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap ${
-              safeActiveTab === t.id ? 'border-[#7c5cfc] text-[#9b8afb]' : 'border-transparent text-[#737b91] hover:text-white'
+              safeActiveTab === t.id ? 'border-[#155EEF] text-[#155EEF]' : 'border-transparent text-[#64748B] hover:text-[#0F172A]'
             }`}
           >
             <t.icon className="w-4 h-4" /> {t.label}
@@ -95,20 +95,20 @@ export const SettingsPage: React.FC = () => {
 
       {/* TAB: INTEGRATIONS VIEW (ADMIN ONLY - MANAGER CANNOT SEE THIS TAB AT ALL) */}
       {safeActiveTab === 'integrations' && isAdmin && (
-        <div className="executive-panel rounded-2xl p-6 space-y-4 text-xs">
-          <h3 className="font-bold text-white uppercase tracking-wider">Gateway Credentials</h3>
+        <div className="executive-panel rounded-2xl p-6 space-y-4 text-xs shadow-sm border border-[#E2E8F0]">
+          <h3 className="font-bold text-[#0B1F3A] uppercase tracking-wider">Gateway Credentials</h3>
           <div className="space-y-3">
-            <div className="p-3 bg-[#070811] rounded-xl border border-[#202641] flex justify-between items-center">
-              <span>SMS Gateway (Twilio):</span>
-              <span className="font-mono text-[#35b77a] font-bold">Connected (AC7482910••••3819)</span>
+            <div className="p-3.5 bg-[#F8FAFC] rounded-xl border border-[#E2E8F0] flex justify-between items-center text-[#0F172A]">
+              <span className="font-semibold">SMS Gateway (Twilio):</span>
+              <span className="font-mono text-emerald-600 font-bold">Connected (AC7482910••••3819)</span>
             </div>
-            <div className="p-3 bg-[#070811] rounded-xl border border-[#202641] flex justify-between items-center">
-              <span>Email Gateway (Microsoft 365):</span>
-              <span className="font-mono text-[#35b77a] font-bold">Connected (ms_live_••••9901)</span>
+            <div className="p-3.5 bg-[#F8FAFC] rounded-xl border border-[#E2E8F0] flex justify-between items-center text-[#0F172A]">
+              <span className="font-semibold">Email Gateway (Microsoft 365):</span>
+              <span className="font-mono text-emerald-600 font-bold">Connected (ms_live_••••9901)</span>
             </div>
-            <div className="p-3 bg-[#070811] rounded-xl border border-[#202641] flex justify-between items-center">
-              <span>AI Engine (OpenAI GPT-4o):</span>
-              <span className="font-mono text-[#35b77a] font-bold">Connected (sk-proj-••••4812)</span>
+            <div className="p-3.5 bg-[#F8FAFC] rounded-xl border border-[#E2E8F0] flex justify-between items-center text-[#0F172A]">
+              <span className="font-semibold">AI Engine (OpenAI GPT-4o):</span>
+              <span className="font-mono text-emerald-600 font-bold">Connected (sk-proj-••••4812)</span>
             </div>
           </div>
         </div>
@@ -116,12 +116,12 @@ export const SettingsPage: React.FC = () => {
 
       {/* TAB: USER MANAGEMENT (ADMIN ONLY - MANAGER CANNOT SEE THIS TAB AT ALL) */}
       {safeActiveTab === 'users' && isAdmin && (
-        <div className="executive-panel rounded-2xl p-6 space-y-4">
-          <div className="flex justify-between items-center pb-2 border-b border-[#202641]">
-            <h3 className="text-xs font-bold text-white uppercase tracking-wider">Active System Users ({users.length})</h3>
+        <div className="executive-panel rounded-2xl p-6 space-y-4 shadow-sm border border-[#E2E8F0]">
+          <div className="flex justify-between items-center pb-2 border-b border-[#E2E8F0]">
+            <h3 className="text-xs font-bold text-[#0B1F3A] uppercase tracking-wider">Active System Users ({users.length})</h3>
             <button
               onClick={() => setShowAddUserModal(true)}
-              className="px-3.5 py-1.5 bg-[#7c5cfc] text-white font-bold text-xs rounded-xl flex items-center gap-1.5"
+              className="px-3.5 py-1.5 btn-executive-primary text-white font-bold text-xs rounded-xl flex items-center gap-1.5 shadow-md transition-all cursor-pointer"
             >
               <UserPlus className="w-3.5 h-3.5" /> Add User
             </button>
@@ -129,22 +129,22 @@ export const SettingsPage: React.FC = () => {
 
           <div className="space-y-3">
             {users.map((u) => (
-              <div key={u.id} className="p-3.5 rounded-xl bg-[#070811] border border-[#202641] flex items-center justify-between text-xs">
+              <div key={u.id} className="p-3.5 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] flex items-center justify-between text-xs shadow-sm">
                 <div>
-                  <div className="font-bold text-white flex items-center gap-2">
+                  <div className="font-bold text-[#0F172A] flex items-center gap-2">
                     {u.name}
-                    <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-[#101323] text-[#9b8afb] border border-[#202641]">
+                    <span className="px-2 py-0.5 rounded text-[9px] font-bold bg-[#EAF2FF] text-[#155EEF] border border-[#155EEF]/20">
                       {u.role}
                     </span>
                   </div>
-                  <div className="text-[10px] text-[#a7adc0]">{u.email} &bull; {u.title}</div>
+                  <div className="text-[10px] text-[#475569]">{u.email} &bull; {u.title}</div>
                 </div>
 
                 {u.id !== currentUser.id && (
                   <button
                     onClick={() => toggleUserStatus(u.id)}
-                    className={`px-3 py-1 rounded-lg text-[10px] font-bold ${
-                      u.status === 'Active' ? 'bg-[#101323] text-[#d05a72] hover:bg-[#d05a72]/20' : 'bg-[#35b77a]/20 text-[#35b77a]'
+                    className={`px-3 py-1 rounded-lg text-[10px] font-bold transition-colors cursor-pointer ${
+                      u.status === 'Active' ? 'bg-slate-100 text-rose-600 hover:bg-rose-100' : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
                     }`}
                   >
                     {u.status === 'Active' ? 'Deactivate User' : 'Reactivate User'}
@@ -158,27 +158,27 @@ export const SettingsPage: React.FC = () => {
 
       {/* FORM BODY FOR COMMON SETTINGS (AI, OUTREACH, GRADING) */}
       {(safeActiveTab === 'ai' || safeActiveTab === 'general' || safeActiveTab === 'grading') && (
-        <form onSubmit={handleSaveSettings} className="executive-panel rounded-2xl p-6 space-y-6">
+        <form onSubmit={handleSaveSettings} className="executive-panel rounded-2xl p-6 space-y-6 shadow-sm border border-[#E2E8F0]">
           
           {safeActiveTab === 'ai' && (
             <div className="space-y-4 text-xs">
               <div>
-                <label className="block text-[#a7adc0] font-bold mb-2">Global AI Persona Instructions</label>
+                <label className="block text-[#475569] font-bold mb-2">Global AI Persona Instructions</label>
                 <textarea
                   rows={5}
                   value={instructions}
                   onChange={(e) => setInstructions(e.target.value)}
-                  className="w-full p-3.5 bg-[#070811] border border-[#202641] rounded-xl text-white font-mono text-xs focus:outline-none focus:border-[#7c5cfc]"
+                  className="w-full p-3.5 bg-white border border-[#E2E8F0] rounded-xl text-[#0F172A] font-mono text-xs focus:outline-none focus:border-[#155EEF] shadow-sm"
                 />
               </div>
 
               <div>
-                <label className="block text-[#a7adc0] font-bold mb-1">AI Consecutive Reply Cap</label>
+                <label className="block text-[#475569] font-bold mb-1">AI Consecutive Reply Cap</label>
                 <input
                   type="number"
                   value={maxReplies}
                   onChange={(e) => setMaxReplies(Number(e.target.value))}
-                  className="w-32 p-2.5 bg-[#070811] border border-[#202641] rounded-xl text-white font-mono focus:outline-none focus:border-[#7c5cfc]"
+                  className="w-32 p-2.5 bg-white border border-[#E2E8F0] rounded-xl text-[#0F172A] font-mono focus:outline-none focus:border-[#155EEF] shadow-sm"
                 />
               </div>
             </div>
@@ -187,12 +187,12 @@ export const SettingsPage: React.FC = () => {
           {safeActiveTab === 'general' && (
             <div className="space-y-4 text-xs">
               <div>
-                <label className="block text-[#a7adc0] font-bold mb-1">Cadence Re-Touch Interval (Days)</label>
+                <label className="block text-[#475569] font-bold mb-1">Cadence Re-Touch Interval (Days)</label>
                 <input
                   type="number"
                   value={cadenceDays}
                   onChange={(e) => setCadenceDays(Number(e.target.value))}
-                  className="w-32 p-2.5 bg-[#070811] border border-[#202641] rounded-xl text-white font-mono focus:outline-none focus:border-[#7c5cfc]"
+                  className="w-32 p-2.5 bg-white border border-[#E2E8F0] rounded-xl text-[#0F172A] font-mono focus:outline-none focus:border-[#155EEF] shadow-sm"
                 />
               </div>
             </div>
@@ -200,30 +200,30 @@ export const SettingsPage: React.FC = () => {
 
           {safeActiveTab === 'grading' && (
             <div className="space-y-3 text-xs">
-              <h4 className="font-bold text-white uppercase tracking-wider mb-2">Qualification Scoring Weights</h4>
+              <h4 className="font-bold text-[#0B1F3A] uppercase tracking-wider mb-2">Qualification Scoring Weights</h4>
               <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 bg-[#070811] rounded-xl border border-[#202641]">
-                  <span className="text-[#737b91] block text-[10px]">Address Captured</span>
-                  <strong className="text-[#9b8afb] text-sm font-mono">{settings.gradeWeights.address}% Weight</strong>
+                <div className="p-3.5 bg-[#F8FAFC] rounded-xl border border-[#E2E8F0]">
+                  <span className="text-[#64748B] block text-[10px] uppercase font-bold">Address Captured</span>
+                  <strong className="text-[#155EEF] text-sm font-mono">{settings.gradeWeights.address}% Weight</strong>
                 </div>
-                <div className="p-3 bg-[#070811] rounded-xl border border-[#202641]">
-                  <span className="text-[#737b91] block text-[10px]">Price Response</span>
-                  <strong className="text-[#9b8afb] text-sm font-mono">{settings.gradeWeights.price}% Weight</strong>
+                <div className="p-3.5 bg-[#F8FAFC] rounded-xl border border-[#E2E8F0]">
+                  <span className="text-[#64748B] block text-[10px] uppercase font-bold">Price Response</span>
+                  <strong className="text-[#155EEF] text-sm font-mono">{settings.gradeWeights.price}% Weight</strong>
                 </div>
               </div>
             </div>
           )}
 
-          <div className="pt-4 border-t border-[#202641] flex items-center justify-between">
+          <div className="pt-4 border-t border-[#E2E8F0] flex items-center justify-between">
             <button
               type="submit"
-              className="px-6 py-3 bg-[#7c5cfc] hover:bg-[#6847e8] text-white font-bold text-xs rounded-xl shadow-lg shadow-[#7c5cfc]/20 transition-all flex items-center gap-2 cursor-pointer"
+              className="px-6 py-3 btn-executive-primary text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer"
             >
               <Save className="w-4 h-4" /> Save System Settings
             </button>
 
             {savedSuccess && (
-              <span className="text-xs text-[#35b77a] font-bold flex items-center gap-1">
+              <span className="text-xs text-emerald-600 font-bold flex items-center gap-1">
                 <Check className="w-4 h-4" /> Configuration Saved!
               </span>
             )}
@@ -234,42 +234,42 @@ export const SettingsPage: React.FC = () => {
 
       {/* ADD USER MODAL (ADMIN ONLY) */}
       {showAddUserModal && isAdmin && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <div className="executive-panel w-full max-w-md rounded-2xl p-6 relative space-y-4">
-            <button onClick={() => setShowAddUserModal(false)} className="absolute top-5 right-5 text-[#737b91] hover:text-white">
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="executive-panel w-full max-w-md rounded-2xl p-6 relative space-y-4 shadow-2xl border border-[#E2E8F0]">
+            <button onClick={() => setShowAddUserModal(false)} className="absolute top-5 right-5 text-[#64748B] hover:text-[#0F172A]">
               <X className="w-5 h-5" />
             </button>
-            <h3 className="text-lg font-bold text-white">Add System User</h3>
+            <h3 className="text-lg font-bold text-[#0B1F3A]">Add System User</h3>
             
             <form onSubmit={handleCreateUser} className="space-y-3 text-xs">
               <div>
-                <label className="block text-[#a7adc0] font-semibold mb-1">Full Name</label>
+                <label className="block text-[#475569] font-semibold mb-1">Full Name</label>
                 <input
                   type="text"
                   required
                   value={newUserName}
                   onChange={(e) => setNewUserName(e.target.value)}
-                  className="w-full p-2.5 bg-[#070811] border border-[#202641] rounded-xl text-white focus:outline-none"
+                  className="w-full p-2.5 bg-white border border-[#E2E8F0] rounded-xl text-[#0F172A] focus:outline-none focus:border-[#155EEF] shadow-sm"
                 />
               </div>
 
               <div>
-                <label className="block text-[#a7adc0] font-semibold mb-1">Work Email</label>
+                <label className="block text-[#475569] font-semibold mb-1">Work Email</label>
                 <input
                   type="email"
                   required
                   value={newUserEmail}
                   onChange={(e) => setNewUserEmail(e.target.value)}
-                  className="w-full p-2.5 bg-[#070811] border border-[#202641] rounded-xl text-white focus:outline-none"
+                  className="w-full p-2.5 bg-white border border-[#E2E8F0] rounded-xl text-[#0F172A] focus:outline-none focus:border-[#155EEF] shadow-sm"
                 />
               </div>
 
               <div>
-                <label className="block text-[#a7adc0] font-semibold mb-1">Role Assignment</label>
+                <label className="block text-[#475569] font-semibold mb-1">Role Assignment</label>
                 <select
                   value={newUserRole}
                   onChange={(e) => setNewUserRole(e.target.value as UserRole)}
-                  className="w-full p-2.5 bg-[#070811] border border-[#202641] rounded-xl text-white focus:outline-none"
+                  className="w-full p-2.5 bg-white border border-[#E2E8F0] rounded-xl text-[#0F172A] focus:outline-none focus:border-[#155EEF] shadow-sm cursor-pointer"
                 >
                   <option value="ADMIN">ADMIN (Full Access)</option>
                   <option value="MANAGER">MANAGER (Team Workload)</option>
@@ -280,7 +280,7 @@ export const SettingsPage: React.FC = () => {
 
               <button
                 type="submit"
-                className="w-full py-3 bg-[#7c5cfc] text-white font-bold rounded-xl mt-3"
+                className="w-full py-3 btn-executive-primary text-white font-bold rounded-xl mt-3 transition-all shadow-md cursor-pointer"
               >
                 Create User & Assign Role
               </button>

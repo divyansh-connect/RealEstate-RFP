@@ -2,65 +2,162 @@
 
 @layer base {
   body {
-    background-color: #070811;
-    color: #f5f5f7;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Inter', sans-serif;
+    background-color: #F8FBFF;
+    background-image: 
+      radial-gradient(circle at 50% 0%, rgba(21, 94, 239, 0.05) 0%, transparent 50%),
+      linear-gradient(180deg, #F8FBFF 0%, #F1F6FC 100%);
+    background-attachment: fixed;
+    color: #0F172A;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  }
+
+  .font-mono {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
   }
 }
 
-/* Executive Midnight Indigo & Violet Theme Variables */
-:root {
-  --bg-primary: #070811;
-  --bg-secondary: #0b0d18;
-  --bg-surface: #101323;
-  --bg-card: #12162a;
-  --bg-hover: #171c33;
+/* Executive Blue & White Luxury Design System Tokens */
+:root, html.light, html.dark {
+  --bg-primary: #F8FBFF;
+  --bg-secondary: #FFFFFF;
+  --bg-surface: #F1F6FC;
+  --bg-card: #FFFFFF;
+  --bg-hover: #F0F6FF;
+  --bg-overlay: rgba(11, 31, 58, 0.45);
   
-  --accent-violet: #7c5cfc;
-  --accent-violet-deep: #6847e8;
-  --accent-indigo: #5965d8;
-  --accent-violet-soft: #9b8afb;
-  --accent-ai: #a855f7;
+  --accent-navy: #0B1F3A;
+  --accent-blue-primary: #155EEF;
+  --accent-blue-secondary: #2563EB;
+  --accent-blue-light: #EAF2FF;
+  --accent-blue-verylight: #F8FBFF;
+
+  --accent-gradient-primary: linear-gradient(135deg, #0B1F3A 0%, #155EEF 100%);
+  --accent-gradient-hover: linear-gradient(135deg, #0B1F3A 0%, #2563EB 100%);
+  --accent-gradient-subtle: linear-gradient(180deg, #F8FBFF 0%, #EEF5FF 100%);
+
+  --border-subtle: #E2EAF5;
   
-  --border-subtle: #202641;
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
+  --text-muted: #64748B;
   
-  --text-primary: #f5f5f7;
-  --text-secondary: #a7adc0;
-  --text-muted: #737b91;
-  
-  --semantic-success: #35b77a;
-  --semantic-danger: #d05a72;
+  --semantic-success: #16A34A;
+  --semantic-danger: #E11D48;
+
+  --panel-bg: #FFFFFF;
+  --panel-border: #E2EAF5;
+  --panel-shadow: 0 4px 20px -2px rgba(11, 31, 58, 0.05), 0 2px 6px -1px rgba(11, 31, 58, 0.03);
+
+  color-scheme: light;
 }
 
 /* Custom luxury scrollbar */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #070811;
+  background: #F1F6FC;
 }
 ::-webkit-scrollbar-thumb {
-  background: #202641;
+  background: #CBD5E1;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #323b63;
+  background: #155EEF;
 }
 
-/* Executive Midnight Panel Styling */
+/* Executive Panel Styling */
 .executive-panel {
-  background: linear-gradient(180deg, #12162a 0%, #0b0d18 100%);
-  border: 1px solid #202641;
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+  background: #FFFFFF;
+  border: 1px solid #E2EAF5;
+  box-shadow: 0 4px 20px -2px rgba(11, 31, 58, 0.05), 0 2px 6px -1px rgba(11, 31, 58, 0.03);
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
 }
 
 .executive-panel-hover {
   transition: all 0.2s ease-in-out;
 }
 .executive-panel-hover:hover {
-  border-color: rgba(124, 92, 252, 0.4);
-  box-shadow: 0 12px 35px -10px rgba(124, 92, 252, 0.15);
-  transform: translateY(-1px);
+  border-color: #93C5FD;
+  box-shadow: 0 12px 28px -6px rgba(21, 94, 239, 0.12), 0 4px 10px -2px rgba(11, 31, 58, 0.04);
+  transform: translateY(-2px);
 }
+
+/* Premium Primary Gradient Buttons */
+.btn-executive-primary,
+button.bg-\[\#155EEF\],
+a.bg-\[\#155EEF\] {
+  background: linear-gradient(135deg, #0B1F3A 0%, #155EEF 100%) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 14px rgba(21, 94, 239, 0.25) !important;
+  transition: all 0.2s ease-in-out !important;
+}
+.btn-executive-primary:hover,
+button.bg-\[\#155EEF\]:hover,
+a.bg-\[\#155EEF\]:hover {
+  background: linear-gradient(135deg, #0B1F3A 0%, #2563EB 100%) !important;
+  box-shadow: 0 8px 20px rgba(21, 94, 239, 0.35) !important;
+  transform: translateY(-1px) !important;
+}
+.btn-executive-primary:active,
+button.bg-\[\#155EEF\]:active,
+a.bg-\[\#155EEF\]:active {
+  transform: translateY(0px) !important;
+  box-shadow: 0 2px 8px rgba(21, 94, 239, 0.2) !important;
+}
+
+/* Sidebar Active & Hover Enhancements */
+.sidebar-item-hover {
+  transition: all 0.18s ease-in-out;
+}
+.sidebar-item-hover:hover {
+  background: linear-gradient(90deg, #F0F6FF 0%, #EAF2FF 100%) !important;
+  color: #0B1F3A !important;
+}
+
+.sidebar-item-active {
+  background: linear-gradient(135deg, #0B1F3A 0%, #155EEF 100%) !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 16px rgba(21, 94, 239, 0.3) !important;
+}
+
+/* Input Focus Glow */
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #155EEF !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15) !important;
+}
+
+/* Global utility overrides for Executive Blue + White consistency */
+.bg-\[\#070811\] { background-color: #F8FBFF !important; }
+.bg-\[\#0b0d18\] { background-color: #FFFFFF !important; }
+.bg-\[\#101323\] { background-color: #F1F6FC !important; }
+.bg-\[\#12162a\] { background-color: #FFFFFF !important; }
+.bg-\[\#171c33\] { background-color: #EAF2FF !important; }
+.bg-slate-950\/80, .bg-slate-950\/85 { background-color: rgba(11, 31, 58, 0.45) !important; }
+
+.border-\[\#202641\] { border-color: #E2EAF5 !important; }
+.border-slate-800, .border-slate-700 { border-color: #E2EAF5 !important; }
+
+.text-\[\#f5f5f7\] { color: #0F172A !important; }
+.text-\[\#a7adc0\] { color: #475569 !important; }
+.text-\[\#737b91\] { color: #64748B !important; }
+.text-\[\#9b8afb\] { color: #155EEF !important; }
+.text-\[\#7c5cfc\] { color: #155EEF !important; }
+
+.bg-\[\#7c5cfc\] { 
+  background: linear-gradient(135deg, #0B1F3A 0%, #155EEF 100%) !important;
+  color: #FFFFFF !important;
+}
+.hover\:bg-\[\#6847e8\]:hover { 
+  background: linear-gradient(135deg, #0B1F3A 0%, #2563EB 100%) !important; 
+}
+
+.bg-\[\#7c5cfc\]\/10, .bg-\[\#7c5cfc\]\/15, .bg-\[\#7c5cfc\]\/20 { background-color: #EAF2FF !important; }
+.border-\[\#7c5cfc\]\/30, .border-\[\#7c5cfc\]\/40 { border-color: #BFDBFE !important; }
+.border-\[\#7c5cfc\]\/50 { border-color: #155EEF !important; }

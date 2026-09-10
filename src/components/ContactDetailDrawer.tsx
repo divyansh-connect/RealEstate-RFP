@@ -38,33 +38,33 @@ export const ContactDetailDrawer: React.FC<ContactDrawerProps> = ({ contact, onC
   ];
 
   return (
-    <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex justify-end">
-      <div className="w-full max-w-2xl bg-[#070811] border-l border-[#202641] h-full flex flex-col shadow-2xl relative">
+    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex justify-end">
+      <div className="w-full max-w-2xl bg-white border-l border-[#E2E8F0] h-full flex flex-col shadow-2xl relative">
         
         {/* DRAWER HEADER */}
-        <div className="p-6 border-b border-[#202641] flex items-start justify-between bg-[#0b0d18]">
+        <div className="p-6 border-b border-[#E2E8F0] flex items-start justify-between bg-white">
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-xl font-bold text-white">{contact.name}</h2>
-              <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[#101323] text-[#9b8afb] border border-[#202641]">
+              <h2 className="text-xl font-bold text-[#0B1F3A]">{contact.name}</h2>
+              <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-[#EAF2FF] text-[#155EEF] border border-[#BFDBFE]">
                 {contact.status}
               </span>
             </div>
-            <p className="text-xs text-[#a7adc0] mt-1">{contact.brokerage} &bull; <span className="font-mono text-slate-300">{contact.licenseNumber}</span></p>
+            <p className="text-xs text-[#475569] mt-1">{contact.brokerage} &bull; <span className="font-mono text-[#64748B]">{contact.licenseNumber}</span></p>
           </div>
 
-          <button onClick={onClose} className="p-1.5 text-[#737b91] hover:text-white rounded-lg border border-[#202641]">
+          <button onClick={onClose} className="p-1.5 text-[#64748B] hover:text-[#0F172A] rounded-lg border border-[#E2E8F0] bg-[#F5F8FC]">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* ACTIONS BAR - HIDE WRITE ACTIONS COMPLETELY FOR READ_ONLY */}
         {!isReadOnly && (
-          <div className="p-4 bg-[#0b0d18]/60 border-b border-[#202641] flex items-center justify-between gap-2 overflow-x-auto">
+          <div className="p-4 bg-[#F5F8FC] border-b border-[#E2E8F0] flex items-center justify-between gap-2 overflow-x-auto">
             <div className="flex items-center gap-2">
               <button
                 onClick={() => onOpenCallModal(contact)}
-                className="px-3.5 py-1.5 rounded-lg bg-[#35b77a] hover:bg-[#2fa26c] text-slate-950 font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow-md"
+                className="px-3.5 py-1.5 rounded-lg bg-[#16A34A] hover:bg-[#15803D] text-white font-bold text-xs flex items-center gap-1.5 cursor-pointer shadow-xs"
               >
                 <Phone className="w-3.5 h-3.5" /> Call Realtor
               </button>
@@ -72,56 +72,56 @@ export const ContactDetailDrawer: React.FC<ContactDrawerProps> = ({ contact, onC
               {contact.status === 'Active in Outreach' ? (
                 <button
                   onClick={() => updateContact(contact.id, { status: 'Declined' })}
-                  className="px-3 py-1.5 rounded-lg bg-[#101323] hover:bg-[#171c33] text-slate-300 text-xs font-semibold flex items-center gap-1.5"
+                  className="px-3 py-1.5 rounded-lg bg-white border border-[#E2E8F0] hover:bg-[#EAF2FF] text-[#0F172A] text-xs font-semibold flex items-center gap-1.5"
                 >
-                  <Pause className="w-3.5 h-3.5 text-[#9b8afb]" /> Pause Cadence
+                  <Pause className="w-3.5 h-3.5 text-[#155EEF]" /> Pause Cadence
                 </button>
               ) : (
                 <button
                   onClick={() => updateContact(contact.id, { status: 'Active in Outreach' })}
-                  className="px-3 py-1.5 rounded-lg bg-[#101323] hover:bg-[#171c33] text-slate-300 text-xs font-semibold flex items-center gap-1.5"
+                  className="px-3 py-1.5 rounded-lg bg-white border border-[#E2E8F0] hover:bg-[#EAF2FF] text-[#0F172A] text-xs font-semibold flex items-center gap-1.5"
                 >
-                  <Play className="w-3.5 h-3.5 text-[#35b77a]" /> Enroll Cadence
+                  <Play className="w-3.5 h-3.5 text-[#16A34A]" /> Enroll Cadence
                 </button>
               )}
 
               <button
                 onClick={() => updateContact(contact.id, { status: 'Do Not Contact' })}
-                className="px-3 py-1.5 rounded-lg bg-[#101323] hover:bg-[#d05a72]/20 text-[#d05a72] text-xs font-semibold flex items-center gap-1.5"
+                className="px-3 py-1.5 rounded-lg bg-white border border-[#E2E8F0] hover:bg-rose-50 text-[#E11D48] text-xs font-semibold flex items-center gap-1.5"
               >
                 <Ban className="w-3.5 h-3.5" /> Set DNC
               </button>
             </div>
 
             <div className="text-right">
-              <div className="text-[10px] text-[#737b91] uppercase font-bold">Grade</div>
-              <div className="font-bold font-mono text-[#9b8afb] text-sm">{contact.grade} ({contact.score})</div>
+              <div className="text-[10px] text-[#64748B] uppercase font-bold">Grade</div>
+              <div className="font-extrabold font-mono text-[#155EEF] text-sm">{contact.grade} ({contact.score})</div>
             </div>
           </div>
         )}
 
         {/* METADATA GRID */}
-        <div className="grid grid-cols-3 gap-3 p-4 border-b border-[#202641] text-xs bg-[#070811]">
+        <div className="grid grid-cols-3 gap-3 p-4 border-b border-[#E2E8F0] text-xs bg-[#F5F8FC]">
           <div>
-            <span className="text-[#737b91] block text-[10px] uppercase font-bold">Market</span>
-            <span className="text-white font-medium">{contact.market}</span>
+            <span className="text-[#64748B] block text-[10px] uppercase font-bold">Market</span>
+            <span className="text-[#0B1F3A] font-semibold">{contact.market}</span>
           </div>
           <div>
-            <span className="text-[#737b91] block text-[10px] uppercase font-bold">Owner</span>
-            <span className="text-white font-medium">{contact.ownerName}</span>
+            <span className="text-[#64748B] block text-[10px] uppercase font-bold">Owner</span>
+            <span className="text-[#0B1F3A] font-semibold">{contact.ownerName}</span>
           </div>
           <div>
-            <span className="text-[#737b91] block text-[10px] uppercase font-bold">Last Contact</span>
-            <span className="text-[#a7adc0] font-mono">{contact.lastContacted}</span>
+            <span className="text-[#64748B] block text-[10px] uppercase font-bold">Last Contact</span>
+            <span className="text-[#475569] font-mono">{contact.lastContacted}</span>
           </div>
         </div>
 
         {/* TAB NAVIGATION */}
-        <div className="flex border-b border-[#202641] bg-[#0b0d18] px-4">
+        <div className="flex border-b border-[#E2E8F0] bg-white px-4">
           <button
             onClick={() => setActiveTab('timeline')}
             className={`py-3 px-4 text-xs font-bold border-b-2 transition-all ${
-              activeTab === 'timeline' ? 'border-[#7c5cfc] text-[#9b8afb]' : 'border-transparent text-[#737b91]'
+              activeTab === 'timeline' ? 'border-[#155EEF] text-[#155EEF]' : 'border-transparent text-[#64748B]'
             }`}
           >
             Activity Timeline
@@ -129,7 +129,7 @@ export const ContactDetailDrawer: React.FC<ContactDrawerProps> = ({ contact, onC
           <button
             onClick={() => setActiveTab('notes')}
             className={`py-3 px-4 text-xs font-bold border-b-2 transition-all ${
-              activeTab === 'notes' ? 'border-[#7c5cfc] text-[#9b8afb]' : 'border-transparent text-[#737b91]'
+              activeTab === 'notes' ? 'border-[#155EEF] text-[#155EEF]' : 'border-transparent text-[#64748B]'
             }`}
           >
             Agent Notes ({notesList.length})
@@ -137,22 +137,22 @@ export const ContactDetailDrawer: React.FC<ContactDrawerProps> = ({ contact, onC
         </div>
 
         {/* TAB CONTENT BODY */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+        <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-[#F7F9FC]">
           
           {/* TIMELINE TAB */}
           {activeTab === 'timeline' && (
-            <div className="relative pl-6 border-l-2 border-[#202641] space-y-6">
+            <div className="relative pl-6 border-l-2 border-[#E2E8F0] space-y-6">
               {timelineEvents.map((ev, i) => (
                 <div key={i} className="relative group">
-                  <div className="absolute -left-[31px] top-0 w-4 h-4 rounded-full bg-[#070811] border-2 border-[#7c5cfc]" />
+                  <div className="absolute -left-[31px] top-0 w-4 h-4 rounded-full bg-white border-2 border-[#155EEF]" />
                   <div className="flex justify-between items-start mb-1">
-                    <h4 className="text-xs font-bold text-white">{ev.title}</h4>
-                    <span className="text-[10px] text-[#737b91] font-mono">{ev.time}</span>
+                    <h4 className="text-xs font-bold text-[#0B1F3A]">{ev.title}</h4>
+                    <span className="text-[10px] text-[#64748B] font-mono">{ev.time}</span>
                   </div>
-                  <p className="text-xs text-slate-300 bg-[#101323] p-3 rounded-xl border border-[#202641]">
+                  <p className="text-xs text-[#0F172A] bg-white p-3 rounded-xl border border-[#E2E8F0] shadow-xs">
                     {ev.desc}
                   </p>
-                  <div className="text-[9px] text-[#737b91] mt-1">Actor: {ev.actor}</div>
+                  <div className="text-[9px] text-[#64748B] mt-1">Actor: {ev.actor}</div>
                 </div>
               ))}
             </div>
@@ -168,11 +168,11 @@ export const ContactDetailDrawer: React.FC<ContactDrawerProps> = ({ contact, onC
                     value={newNote}
                     onChange={(e) => setNewNote(e.target.value)}
                     placeholder="Log specific realtor requirements..."
-                    className="w-full p-3 bg-[#101323] border border-[#202641] rounded-xl text-xs text-white placeholder-[#737b91] focus:outline-none focus:border-[#7c5cfc]"
+                    className="w-full p-3 bg-white border border-[#E2E8F0] rounded-xl text-xs text-[#0F172A] placeholder-[#64748B] focus:outline-none focus:border-[#155EEF]"
                   />
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-[#7c5cfc] hover:bg-[#6847e8] text-white font-bold text-xs rounded-xl"
+                    className="px-4 py-2 btn-executive-primary text-white font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer"
                   >
                     Save Note To Contact
                   </button>
@@ -181,7 +181,7 @@ export const ContactDetailDrawer: React.FC<ContactDrawerProps> = ({ contact, onC
 
               <div className="space-y-2 pt-2">
                 {notesList.map((note, idx) => (
-                  <div key={idx} className="p-3 rounded-xl bg-[#101323] border border-[#202641] text-xs text-[#f5f5f7]">
+                  <div key={idx} className="p-3 rounded-xl bg-white border border-[#E2E8F0] text-xs text-[#0F172A] shadow-xs">
                     {note}
                   </div>
                 ))}

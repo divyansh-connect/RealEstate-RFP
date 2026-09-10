@@ -34,26 +34,26 @@ export const ClickToCallModal: React.FC<CallModalProps> = ({ contact, onClose })
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 flex items-center justify-center p-4">
-      <div className="executive-panel w-full max-w-md rounded-2xl p-6 relative">
-        <button onClick={onClose} className="absolute top-5 right-5 text-[#737b91] hover:text-white">
+    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
+      <div className="executive-panel w-full max-w-md rounded-2xl p-6 relative bg-white border border-[#E2E8F0] shadow-2xl">
+        <button onClick={onClose} className="absolute top-5 right-5 text-[#64748B] hover:text-[#0F172A]">
           <X className="w-5 h-5" />
         </button>
 
         <div className="text-center space-y-4">
-          <div className="w-16 h-16 rounded-2xl bg-[#7c5cfc]/20 text-[#9b8afb] border border-[#7c5cfc]/30 font-bold text-xl flex items-center justify-center mx-auto">
+          <div className="w-16 h-16 rounded-2xl bg-[#EAF2FF] text-[#155EEF] border border-[#155EEF]/20 font-bold text-xl flex items-center justify-center mx-auto shadow-sm">
             {contact.name.substring(0, 2)}
           </div>
 
           <div>
-            <h3 className="text-lg font-bold text-white">{contact.name}</h3>
-            <p className="text-xs text-[#a7adc0]">{contact.brokerage} &bull; {contact.phone}</p>
+            <h3 className="text-lg font-bold text-[#0B1F3A]">{contact.name}</h3>
+            <p className="text-xs text-[#475569]">{contact.brokerage} &bull; {contact.phone}</p>
           </div>
 
           {callStatus === 'idle' && (
             <button
               onClick={handleStartCall}
-              className="w-full py-3.5 bg-[#35b77a] hover:bg-[#2fa26c] text-slate-950 font-bold text-xs rounded-xl shadow-lg transition-all flex items-center justify-center gap-2"
+              className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
             >
               <Phone className="w-4 h-4" /> Initiate Dialing Session
             </button>
@@ -61,18 +61,18 @@ export const ClickToCallModal: React.FC<CallModalProps> = ({ contact, onClose })
 
           {callStatus === 'calling' && (
             <div className="py-4 space-y-2">
-              <div className="text-[#9b8afb] font-mono text-xs font-bold animate-pulse">Dialing {contact.phone}...</div>
+              <div className="text-[#155EEF] font-mono text-xs font-bold animate-pulse">Dialing {contact.phone}...</div>
             </div>
           )}
 
           {callStatus === 'connected' && (
             <div className="py-4 space-y-3">
-              <div className="text-[#35b77a] font-mono text-sm font-bold flex items-center justify-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-[#35b77a] animate-ping" /> Connected (00:42)
+              <div className="text-emerald-600 font-mono text-sm font-bold flex items-center justify-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" /> Connected (00:42)
               </div>
               <button
                 onClick={handleEndCall}
-                className="w-full py-3 bg-[#d05a72] hover:bg-rose-600 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2"
+                className="w-full py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-2 cursor-pointer shadow-sm transition-colors"
               >
                 <PhoneOff className="w-4 h-4" /> End Call
               </button>
@@ -82,11 +82,11 @@ export const ClickToCallModal: React.FC<CallModalProps> = ({ contact, onClose })
           {callStatus === 'ended' && (
             <form onSubmit={handleSaveCall} className="space-y-3 text-xs text-left pt-2">
               <div>
-                <label className="block text-[#a7adc0] font-semibold mb-1">Call Outcome</label>
+                <label className="block text-[#475569] font-semibold mb-1">Call Outcome</label>
                 <select
                   value={callOutcome}
                   onChange={(e) => setCallOutcome(e.target.value)}
-                  className="w-full p-2.5 bg-[#070811] border border-[#202641] rounded-xl text-white focus:outline-none"
+                  className="w-full p-2.5 bg-white border border-[#E2E8F0] rounded-xl text-[#0F172A] focus:outline-none focus:border-[#155EEF] shadow-sm cursor-pointer"
                 >
                   <option value="Spoke with Agent">Spoke with Agent (Interested)</option>
                   <option value="Left Voicemail">Left Voicemail</option>
@@ -96,19 +96,19 @@ export const ClickToCallModal: React.FC<CallModalProps> = ({ contact, onClose })
               </div>
 
               <div>
-                <label className="block text-[#a7adc0] font-semibold mb-1">Call Notes</label>
+                <label className="block text-[#475569] font-semibold mb-1">Call Notes</label>
                 <textarea
                   rows={3}
                   required
                   value={callNotes}
                   onChange={(e) => setCallNotes(e.target.value)}
-                  className="w-full p-2.5 bg-[#070811] border border-[#202641] rounded-xl text-white focus:outline-none"
+                  className="w-full p-2.5 bg-white border border-[#E2E8F0] rounded-xl text-[#0F172A] focus:outline-none focus:border-[#155EEF] shadow-sm"
                 />
               </div>
 
               <button
                 type="submit"
-                className="w-full py-3 bg-[#7c5cfc] text-white font-bold rounded-xl"
+                className="w-full py-3 btn-executive-primary text-white font-bold rounded-xl transition-all shadow-md cursor-pointer"
               >
                 Save Call Summary To Timeline
               </button>

@@ -8,13 +8,13 @@ interface AppContextType {
   isAuthenticated: boolean;
   login: (email: string, role?: UserRole) => void;
   logout: () => void;
-  
+
   // User Management
   users: UserProfile[];
   addUser: (user: Omit<UserProfile, 'id'>) => void;
   updateUser: (id: string, updates: Partial<UserProfile>) => void;
   toggleUserStatus: (id: string) => void;
-  
+
   // Contacts State & Actions (CRUD + Soft Delete)
   contacts: RealtorContact[];
   addContact: (contact: Omit<RealtorContact, 'id'>) => void;
@@ -22,7 +22,7 @@ interface AppContextType {
   archiveContact: (id: string) => void;
   bulkUpdateContacts: (ids: string[], updates: Partial<RealtorContact>) => void;
   importContacts: (newContacts: Omit<RealtorContact, 'id'>[]) => void;
-  
+
   // Conversations State & Actions
   conversations: Conversation[];
   activeConversationId: string | null;
@@ -30,7 +30,7 @@ interface AppContextType {
   sendMessage: (conversationId: string, text: string) => void;
   toggleAiTakeover: (conversationId: string, aiStatus: 'Active' | 'Human Takeover' | 'AI Off') => void;
   overrideGrade: (conversationId: string, newGrade: Grade, newScore: number, reason: string) => void;
-  
+
   // Deals State & Actions (CRUD)
   deals: PropertyDeal[];
   activeDealId: string | null;
@@ -41,13 +41,13 @@ interface AppContextType {
   archiveDeal: (dealId: string) => void;
   addGeneratedContract: (dealId: string, contract: { templateName: string; fileName: string; fileType: 'pdf' | 'docx'; generatedBy: string }) => void;
   claimLead: (conversationId: string, assignedUserId?: string, assignedUserName?: string) => void;
-  
+
   // Notifications & Audit Logs
   notifications: AppNotification[];
   markNotificationRead: (id: string) => void;
   auditLogs: AuditLogItem[];
   logAuditAction: (action: string, affectedRecord: string) => void;
-  
+
   // Settings & Rules State
   settings: {
     cadenceIntervalDays: number;
@@ -67,17 +67,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [users, setUsers] = useState<UserProfile[]>(MOCK_USERS);
   const [currentUser, setCurrentUser] = useState<UserProfile>(MOCK_USERS[0]); // Admin default
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
-  
+
   const [contacts, setContacts] = useState<RealtorContact[]>(INITIAL_CONTACTS);
   const [conversations, setConversations] = useState<Conversation[]>(INITIAL_CONVERSATIONS);
   const [activeConversationId, setActiveConversationId] = useState<string | null>('conv-1');
-  
+
   const [deals, setDeals] = useState<PropertyDeal[]>(INITIAL_DEALS);
   const [activeDealId, setActiveDealId] = useState<string | null>(null);
-  
+
   const [notifications, setNotifications] = useState<AppNotification[]>(INITIAL_NOTIFICATIONS);
   const [auditLogs, setAuditLogs] = useState<AuditLogItem[]>(INITIAL_AUDIT_LOGS);
-  
+
   const [settings, setSettings] = useState({
     cadenceIntervalDays: 3,
     sendingHoursStart: '08:00',

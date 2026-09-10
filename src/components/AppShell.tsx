@@ -71,29 +71,29 @@ export const AppShell: React.FC<ShellProps> = ({ children, activeTab, setActiveT
   };
 
   return (
-    <div className="min-h-screen bg-[#070811] text-[#f5f5f7] flex flex-col font-sans antialiased">
-      
+    <div className="min-h-screen bg-[#F8FBFF] text-[#0F172A] flex flex-col font-sans antialiased">
+
       {/* TOP HEADER */}
-      <header className="h-16 border-b border-[#202641] bg-[#0b0d18]/90 backdrop-blur-md sticky top-0 z-30 flex items-center justify-between px-4 lg:px-6">
-        
+      <header className="h-16 border-b border-[#E2EAF5] bg-white sticky top-0 z-30 flex items-center justify-between px-4 lg:px-6 shadow-xs">
+
         {/* Left Branding & Mobile Menu */}
         <div className="flex items-center gap-3">
           <button
             onClick={() => setMobileDrawerOpen(!mobileDrawerOpen)}
-            className="lg:hidden p-2 text-[#a7adc0] hover:text-white rounded-lg border border-[#202641]"
+            className="lg:hidden p-2 text-[#475569] hover:text-[#0B1F3A] rounded-lg border border-[#E2EAF5] bg-white"
           >
             <Menu className="w-5 h-5" />
           </button>
 
           <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => setActiveTab('dashboard')}>
-            <div className="w-9 h-9 rounded-xl bg-[#12162a] border border-[#7c5cfc]/40 flex items-center justify-center shadow-md">
-              <Building2 className="w-5 h-5 text-[#7c5cfc]" />
+            <div className="w-9 h-9 rounded-xl bg-[#EAF2FF] border border-[#BFDBFE] flex items-center justify-center shadow-xs">
+              <Building2 className="w-5 h-5 text-[#155EEF]" />
             </div>
             <div className="hidden sm:block">
-              <div className="font-bold tracking-tight text-white text-base leading-none">
-                APEX<span className="text-[#7c5cfc] font-light">ACQUIRE</span>
+              <div className="font-extrabold tracking-tight text-[#0B1F3A] text-base leading-none">
+                APEX<span className="text-[#155EEF] font-semibold">ACQUIRE</span>
               </div>
-              <div className="text-[9px] text-[#a7adc0] uppercase tracking-widest font-semibold mt-0.5">
+              <div className="text-[9px] text-[#64748B] uppercase tracking-widest font-bold mt-0.5">
                 Executive Acquisition Desk
               </div>
             </div>
@@ -102,11 +102,11 @@ export const AppShell: React.FC<ShellProps> = ({ children, activeTab, setActiveT
 
         {/* Global Search Bar */}
         <div className="hidden md:flex items-center flex-1 max-w-md mx-8 relative">
-          <Search className="w-4 h-4 text-[#737b91] absolute left-3.5" />
+          <Search className="w-4 h-4 text-[#64748B] absolute left-3.5" />
           <input
             type="text"
             placeholder="Search realtors, properties, or phone numbers..."
-            className="w-full pl-10 pr-4 py-2 bg-[#101323] border border-[#202641] rounded-xl text-xs text-[#f5f5f7] placeholder-[#737b91] focus:outline-none focus:border-[#7c5cfc]"
+            className="w-full pl-10 pr-4 py-2 bg-[#F1F6FC] border border-[#E2EAF5] rounded-xl text-xs text-[#0F172A] placeholder-[#64748B] focus:outline-none focus:border-[#155EEF] focus:bg-white transition-all shadow-xs"
           />
         </div>
 
@@ -121,15 +121,15 @@ export const AppShell: React.FC<ShellProps> = ({ children, activeTab, setActiveT
                 setShowNotifications(false);
                 setShowProfileMenu(false);
               }}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#7c5cfc]/40 bg-[#7c5cfc]/10 text-[#9b8afb] text-xs font-bold uppercase tracking-wider transition-all cursor-pointer hover:bg-[#7c5cfc]/20"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#BFDBFE] bg-[#EAF2FF] text-[#155EEF] text-xs font-bold uppercase tracking-wider transition-all cursor-pointer hover:bg-[#DBEAFE] shadow-xs"
             >
-              <Shield className="w-3.5 h-3.5 text-[#7c5cfc]" />
+              <Shield className="w-3.5 h-3.5 text-[#155EEF]" />
               <span>ROLE: {currentUser.role.replace('_', ' ')}</span>
             </button>
 
             {showRoleSelector && (
-              <div className="absolute right-0 mt-2 w-52 bg-[#0b0d18] border border-[#202641] rounded-xl shadow-2xl p-1.5 z-50">
-                <div className="px-2 py-1 text-[10px] uppercase font-bold text-[#737b91] border-b border-[#202641] mb-1">
+              <div className="absolute right-0 mt-2 w-52 bg-white border border-[#E2EAF5] rounded-xl shadow-xl p-1.5 z-50">
+                <div className="px-2 py-1 text-[10px] uppercase font-bold text-[#64748B] border-b border-[#E2EAF5] mb-1">
                   Switch Active Persona
                 </div>
                 {(['ADMIN', 'MANAGER', 'AGENT', 'READ_ONLY'] as UserRole[]).map((r) => (
@@ -139,12 +139,11 @@ export const AppShell: React.FC<ShellProps> = ({ children, activeTab, setActiveT
                       setCurrentUserRole(r);
                       setShowRoleSelector(false);
                     }}
-                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center justify-between transition-colors ${
-                      currentUser.role === r ? 'bg-[#7c5cfc]/15 text-[#9b8afb] font-bold' : 'text-[#a7adc0] hover:bg-[#171c33]'
-                    }`}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center justify-between transition-colors ${currentUser.role === r ? 'bg-[#EAF2FF] text-[#155EEF] font-bold' : 'text-[#475569] hover:bg-[#F1F6FC]'
+                      }`}
                   >
                     <span>{r.replace('_', ' ')}</span>
-                    {currentUser.role === r && <Check className="w-3.5 h-3.5 text-[#7c5cfc]" />}
+                    {currentUser.role === r && <Check className="w-3.5 h-3.5 text-[#155EEF]" />}
                   </button>
                 ))}
               </div>
@@ -159,21 +158,21 @@ export const AppShell: React.FC<ShellProps> = ({ children, activeTab, setActiveT
                 setShowRoleSelector(false);
                 setShowProfileMenu(false);
               }}
-              className="p-2 rounded-xl border border-[#202641] bg-[#101323] hover:bg-[#171c33] text-[#a7adc0] transition-all relative cursor-pointer"
+              className="p-2 rounded-xl border border-[#E2EAF5] bg-[#F1F6FC] hover:bg-[#EAF2FF] text-[#475569] transition-all relative cursor-pointer shadow-xs"
             >
-              <Bell className="w-4 h-4 text-[#a7adc0]" />
+              <Bell className="w-4 h-4 text-[#475569]" />
               {unreadNotifications.length > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#7c5cfc] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#155EEF] text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-xs">
                   {unreadNotifications.length}
                 </span>
               )}
             </button>
 
             {showNotifications && (
-              <div className="absolute right-0 mt-2 w-80 bg-[#0b0d18] border border-[#202641] rounded-xl shadow-2xl p-3 z-50">
-                <div className="flex items-center justify-between pb-2 border-b border-[#202641] mb-2">
-                  <h4 className="text-xs font-bold text-white uppercase tracking-wider">Notifications</h4>
-                  <span className="text-[10px] text-[#9b8afb] font-mono">{unreadNotifications.length} unread</span>
+              <div className="absolute right-0 mt-2 w-80 bg-white border border-[#E2EAF5] rounded-xl shadow-xl p-3 z-50">
+                <div className="flex items-center justify-between pb-2 border-b border-[#E2EAF5] mb-2">
+                  <h4 className="text-xs font-bold text-[#0B1F3A] uppercase tracking-wider">Notifications</h4>
+                  <span className="text-[10px] text-[#155EEF] font-mono font-bold">{unreadNotifications.length} unread</span>
                 </div>
                 <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
                   {notifications.map((n) => (
@@ -184,13 +183,12 @@ export const AppShell: React.FC<ShellProps> = ({ children, activeTab, setActiveT
                         if (n.targetPath) setActiveTab(n.targetPath);
                         setShowNotifications(false);
                       }}
-                      className={`p-2.5 rounded-lg border text-xs cursor-pointer transition-all ${
-                        n.read ? 'bg-[#070811] border-[#202641] text-[#737b91]' : 'bg-[#12162a] border-[#7c5cfc]/40 text-[#f5f5f7]'
-                      }`}
+                      className={`p-2.5 rounded-lg border text-xs cursor-pointer transition-all ${n.read ? 'bg-[#F8FBFF] border-[#E2EAF5] text-[#64748B]' : 'bg-[#EAF2FF] border-[#BFDBFE] text-[#0F172A]'
+                        }`}
                     >
-                      <div className="font-semibold text-[#9b8afb] text-[11px] mb-0.5">{n.title}</div>
+                      <div className="font-semibold text-[#155EEF] text-[11px] mb-0.5">{n.title}</div>
                       <div className="text-[11px] leading-tight mb-1">{n.message}</div>
-                      <div className="text-[9px] text-[#737b91] text-right">{n.timestamp}</div>
+                      <div className="text-[9px] text-[#64748B] text-right">{n.timestamp}</div>
                     </div>
                   ))}
                 </div>
@@ -206,29 +204,29 @@ export const AppShell: React.FC<ShellProps> = ({ children, activeTab, setActiveT
                 setShowRoleSelector(false);
                 setShowNotifications(false);
               }}
-              className="flex items-center gap-2 p-1.5 rounded-xl border border-[#202641] bg-[#101323] hover:bg-[#171c33] transition-all cursor-pointer"
+              className="flex items-center gap-2 p-1.5 rounded-xl border border-[#E2EAF5] bg-[#F1F6FC] hover:bg-[#EAF2FF] transition-all cursor-pointer shadow-xs"
             >
-              <div className="w-7 h-7 rounded-lg bg-[#7c5cfc]/20 text-[#9b8afb] font-bold text-xs flex items-center justify-center border border-[#7c5cfc]/30">
+              <div className="w-7 h-7 rounded-lg bg-[#EAF2FF] text-[#155EEF] font-bold text-xs flex items-center justify-center border border-[#BFDBFE]">
                 {currentUser.avatar}
               </div>
               <div className="hidden lg:block text-left pr-1">
-                <div className="text-xs font-semibold text-[#f5f5f7] leading-tight">{currentUser.name}</div>
-                <div className="text-[9px] text-[#a7adc0]">{currentUser.title}</div>
+                <div className="text-xs font-semibold text-[#0F172A] leading-tight">{currentUser.name}</div>
+                <div className="text-[9px] text-[#64748B]">{currentUser.title}</div>
               </div>
             </button>
 
             {showProfileMenu && (
-              <div className="absolute right-0 mt-2 w-52 bg-[#0b0d18] border border-[#202641] rounded-xl shadow-2xl p-2 z-50">
-                <div className="p-2 border-b border-[#202641] mb-1">
-                  <div className="text-xs font-bold text-white">{currentUser.name}</div>
-                  <div className="text-[11px] text-[#a7adc0]">{currentUser.email}</div>
+              <div className="absolute right-0 mt-2 w-52 bg-white border border-[#E2EAF5] rounded-xl shadow-xl p-2 z-50">
+                <div className="p-2 border-b border-[#E2EAF5] mb-1">
+                  <div className="text-xs font-bold text-[#0B1F3A]">{currentUser.name}</div>
+                  <div className="text-[11px] text-[#64748B]">{currentUser.email}</div>
                 </div>
                 <button
                   onClick={() => {
                     logout();
                     setShowProfileMenu(false);
                   }}
-                  className="w-full text-left px-3 py-2 rounded-lg text-xs text-[#d05a72] hover:bg-[#d05a72]/10 flex items-center gap-2 font-medium"
+                  className="w-full text-left px-3 py-2 rounded-lg text-xs text-[#E11D48] hover:bg-rose-50 flex items-center gap-2 font-medium transition-colors"
                 >
                   <LogOut className="w-3.5 h-3.5" /> Sign Out
                 </button>
@@ -241,16 +239,15 @@ export const AppShell: React.FC<ShellProps> = ({ children, activeTab, setActiveT
 
       {/* MAIN CONTAINER */}
       <div className="flex-1 flex overflow-hidden">
-        
+
         {/* SIDEBAR NAVIGATION */}
         <aside
-          className={`hidden lg:flex flex-col border-r border-[#202641] bg-[#0b0d18]/80 backdrop-blur-md transition-all duration-300 relative z-20 ${
-            collapsed ? 'w-20' : 'w-64'
-          }`}
+          className={`hidden lg:flex flex-col border-r border-[#E2EAF5] bg-white transition-all duration-300 relative z-20 ${collapsed ? 'w-20' : 'w-64'
+            }`}
         >
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="absolute -right-3 top-6 w-6 h-6 rounded-full bg-[#0b0d18] border border-[#202641] text-[#a7adc0] hover:text-white flex items-center justify-center z-30 shadow-md cursor-pointer"
+            className="absolute -right-3 top-6 w-6 h-6 rounded-full bg-white border border-[#E2EAF5] text-[#64748B] hover:text-[#0B1F3A] flex items-center justify-center z-30 shadow-md cursor-pointer transition-transform hover:scale-110"
           >
             {collapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronLeft className="w-3.5 h-3.5" />}
           </button>
@@ -264,16 +261,23 @@ export const AppShell: React.FC<ShellProps> = ({ children, activeTab, setActiveT
                 <button
                   key={item.id}
                   onClick={() => handleNavClick(item.id)}
-                  className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold transition-all group cursor-pointer ${
+                  className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold transition-all group cursor-pointer relative ${
                     isActive
-                      ? 'bg-[#7c5cfc]/15 text-[#9b8afb] border-l-2 border-[#7c5cfc] shadow-[0_0_15px_rgba(124,92,252,0.15)]'
-                      : 'text-[#a7adc0] hover:text-slate-200 hover:bg-[#171c33]/50'
+                      ? 'sidebar-item-active font-bold shadow-md shadow-[#155EEF]/25'
+                      : 'text-[#475569] sidebar-item-hover'
                   }`}
                 >
-                  <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-[#7c5cfc]' : 'text-[#737b91] group-hover:text-slate-200'}`} />
+                  {/* Subtle Active Left Indicator */}
+                  {isActive && (
+                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-[#60A5FA] rounded-r-full shadow-sm" />
+                  )}
+
+                  <Icon className={`w-5 h-5 flex-shrink-0 transition-transform group-hover:scale-105 ${isActive ? 'text-white' : 'text-[#64748B] group-hover:text-[#0B1F3A]'}`} />
                   {!collapsed && <span className="flex-1 text-left tracking-wide">{item.label}</span>}
                   {!collapsed && item.badge && (
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#101323] text-[#a7adc0]">
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                      isActive ? 'bg-white/20 text-white backdrop-blur-xs' : 'bg-[#F1F6FC] text-[#64748B] border border-[#E2EAF5]'
+                    }`}>
                       {item.badge}
                     </span>
                   )}
@@ -285,11 +289,11 @@ export const AppShell: React.FC<ShellProps> = ({ children, activeTab, setActiveT
 
         {/* MOBILE DRAWER */}
         {mobileDrawerOpen && (
-          <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-40 lg:hidden flex">
-            <div className="w-72 bg-[#0b0d18] border-r border-[#202641] p-4 flex flex-col h-full">
-              <div className="flex items-center justify-between pb-4 border-b border-[#202641]">
-                <div className="font-bold text-[#7c5cfc]">APEX ACQUIRE</div>
-                <button onClick={() => setMobileDrawerOpen(false)} className="text-[#a7adc0]">✕</button>
+          <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-40 lg:hidden flex">
+            <div className="w-72 bg-white border-r border-[#E2EAF5] p-4 flex flex-col h-full shadow-2xl">
+              <div className="flex items-center justify-between pb-4 border-b border-[#E2EAF5]">
+                <div className="font-extrabold text-[#0B1F3A]">APEX <span className="text-[#155EEF]">ACQUIRE</span></div>
+                <button onClick={() => setMobileDrawerOpen(false)} className="text-[#64748B]">✕</button>
               </div>
               <div className="flex-1 py-4 space-y-2">
                 {visibleNavItems.map((item) => (
@@ -297,7 +301,7 @@ export const AppShell: React.FC<ShellProps> = ({ children, activeTab, setActiveT
                     key={item.id}
                     onClick={() => handleNavClick(item.id)}
                     className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold ${
-                      activeTab === item.id ? 'bg-[#7c5cfc]/20 text-[#9b8afb]' : 'text-[#a7adc0]'
+                      activeTab === item.id ? 'sidebar-item-active font-bold' : 'text-[#475569] sidebar-item-hover'
                     }`}
                   >
                     <item.icon className="w-5 h-5" />
@@ -311,7 +315,7 @@ export const AppShell: React.FC<ShellProps> = ({ children, activeTab, setActiveT
         )}
 
         {/* WORKSPACE CONTENT AREA */}
-        <main className="flex-1 overflow-y-auto bg-[#070811] p-4 lg:p-8">
+        <main className="flex-1 overflow-y-auto p-4 lg:p-8">
           {children}
         </main>
 
